@@ -45,4 +45,35 @@ the license file has been uploaded to tftp server  192.168.12.60 (you client mac
 FortiADC-ALI # execute vm license tftp FADLICENSE.lic 192.168.12.60
 
 
+after deployment, it shall output below information.
+
+Outputs:
+
+FortigateAdminGUI_PORT = "8443"
+PrimaryFortigateAvailability_zone = "cn-hongkong-b"
+PrimaryFortigateID = "i-j6c8ukmv8inb7eul5ik5"
+PrimaryFortigatePrivateIP = "192.168.11.11"
+PrimaryFortigatePublicIP = "47.242.124.76"
+PrimaryFortigateport2IP = "192.168.12.11"
+ack1_worknode_ip = tolist([
+  "10.1.0.164",
+  "10.1.0.163",
+])
+ack2_worknode_ip = tolist([
+  "10.0.0.250",
+  "10.0.0.251",
+])
+client-vm = "192.168.12.60"
+client-vm-password = "Welcome.123"
+client-vm-ssh-port = "2022"
+fortiadc_gui_https_port = 9443
+fortiadc_instance_id = "i-j6c8ukmv8inb7eul5ik6"
+fortiadc_private_ip = "10.0.11.11"
+fortiadc_public_ip = "47.243.181.129"
+fortiadc_ssh_port = 6022
+
+
+
+
+
 
