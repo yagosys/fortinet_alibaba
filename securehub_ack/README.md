@@ -12,13 +12,21 @@ Procedure to deploy
 1. modify the cn.auto.tfvars  with proper license and image id,region etc
 
 instance_ami="m-j6cj2liju58d88zmgbdg" //fortigate hongkong china
+
 fortiadc_instance_ami="m-j6cci77g4mwuaa8xfkx7"
+
 fadLicense="./FADV040000225874.lic"
+
 zone_id_1="cn-hongkong-b"
+
 zone_id_2="cn-hongkong-c"
+
 region="cn-hongkong"
+
 ALIYUN__region="cn-hongkong"
+
 cen_region="cn-hongkong"
+
 fgtlicense="./FGVMULTM22000750.lic"
 
 change the region to your own region, place both fortigate and fortiadc license to the deployment folder and change the license file name.
