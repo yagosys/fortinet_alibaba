@@ -1,12 +1,8 @@
 Prerequisition
-1. Fortigate BYOL license
-contact fortinet to obtain BYOL license
-2. FortiADC BYOL License
-contact fortinet to obtain BYOL license
-3. FortiADC custom image
-contact fortinet to obtain fortiadc image and build custom image on alibaba in the target region
-4. CEN support
-contact alibaba to whitelist CEN subnet routing feature for the target region
+1. Fortigate BYOL license , contact fortinet to obtain BYOL license
+2. FortiADC BYOL License, contact fortinet to obtain BYOL license
+3. FortiADC custom image, contact fortinet to obtain fortiadc image and build custom image on alibaba in the target region
+4. CEN support, contact alibaba to whitelist CEN subnet routing feature for the target region
 
 Procedure to deploy
 1. modify the cn.auto.tfvars  with proper license and image id,region etc
