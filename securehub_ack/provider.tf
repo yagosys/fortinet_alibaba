@@ -4,9 +4,4 @@ provider "alicloud" {
   region  = var.region
 }
 
-provider "alicloud" {
-  alias  = "wangxianping"
-  profile = "18121219849"
-  region = "cn-shanghai"
-}
 
