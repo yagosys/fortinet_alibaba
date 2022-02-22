@@ -1,3 +1,6 @@
+user guide
+https://github.com/yagosys/fortinet_alibaba/blob/main/securehub_ack/Secure%20ACK%20with%20Fortigate%20and%20FortiADC.pdf
+
 Prerequisition
 1. Fortigate BYOL license , contact fortinet to obtain BYOL license
 2. FortiADC BYOL License, contact fortinet to obtain BYOL license
