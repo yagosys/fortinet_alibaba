@@ -15,7 +15,7 @@ instance_ami="m-j6cj2liju58d88zmgbdg" //fortigate hongkong china 6.4 version ima
 
 fortiadc_instance_ami="m-j6cci77g4mwuaa8xfkx7" //custom image 6.0.1 on region hongkong
 
-fadLicense="./FADV040000225874.lic" //fortiadc license, please put in the same directory with terraform script.
+fadlicense="./fadv040000225874.lic" //fortiadc license, please put in the same directory with terraform script.
 
 zone_id_1="cn-hongkong-b" //this is the zone that CEN has attachment support
 
@@ -28,6 +28,7 @@ ALIYUN__region="cn-hongkong" //this is not required. reserved
 cen_region="cn-hongkong" //this is the CEN region, must be same region as other VPCs in this POC.
 
 fgtlicense="./FGVMULTM22000750.lic" //fortigate license, place in the same directory with terraform script.
+fortiadcpublicip_bandwidth_out="5"  //this is for fortiadc public ip, if not required, use "0".
 
 change the region to your own region, place both fortigate and fortiadc license to the deployment folder and change the license file name.
 select right zone_id for CEN attachment, you can go to alibaba console to check the proper zone_id. different region has different zone_id
