@@ -9,24 +9,25 @@ Prerequisition
 
 Procedure to deploy
 1. modify the cn.auto.tfvars  with proper license and image id,region etc
+2. the default configuration use alibaba china account. the default variable is in cn.auto.tfvars. 
 
-instance_ami="m-j6cj2liju58d88zmgbdg" //fortigate hongkong china
+instance_ami="m-j6cj2liju58d88zmgbdg" //fortigate hongkong china 6.4 version image
 
-fortiadc_instance_ami="m-j6cci77g4mwuaa8xfkx7"
+fortiadc_instance_ami="m-j6cci77g4mwuaa8xfkx7" //custom image 6.0.1 on region hongkong
 
-fadLicense="./FADV040000225874.lic"
+fadLicense="./FADV040000225874.lic" //fortiadc license, please put in the same directory with terraform script.
 
-zone_id_1="cn-hongkong-b"
+zone_id_1="cn-hongkong-b" //this is the zone that CEN has attachment support
 
-zone_id_2="cn-hongkong-c"
+zone_id_2="cn-hongkong-c" //this is the zone that CEN has attachment support
 
 region="cn-hongkong"
 
-ALIYUN__region="cn-hongkong"
+ALIYUN__region="cn-hongkong" //this is not required. reserved  
 
-cen_region="cn-hongkong"
+cen_region="cn-hongkong" //this is the CEN region, must be same region as other VPCs in this POC.
 
-fgtlicense="./FGVMULTM22000750.lic"
+fgtlicense="./FGVMULTM22000750.lic" //fortigate license, place in the same directory with terraform script.
 
 change the region to your own region, place both fortigate and fortiadc license to the deployment folder and change the license file name.
 select right zone_id for CEN attachment, you can go to alibaba console to check the proper zone_id. different region has different zone_id
@@ -38,7 +39,7 @@ terraform apply
 after deployment
 
 in this version, fortiadc cloud init does not work.
-so you have to upload license to fortiadc and configure fortiadc.
+so you have to upload license to fortiadc and configure fortiadc, please reference user guide for how to config..
 
 fortiadc_config.conf  file is just placehold for future , it will not be loaded by cloud-init 
 you can either go to fortiadc GUI to upload license for use cli to update license.
