@@ -1,3 +1,5 @@
+create your own alibaba cloud profile with your own access key id and credentail according https://www.alibabacloud.com/help/en/doc-detail/90766.htm
+
 Usage
 edit cn.auto.tfvars with your own parameters
 
@@ -15,3 +17,10 @@ region="cn-hongkong"
 license1="./nolicense.lic" //this is for when using PYGO. the license file is empty. 
 
 license2="./nolicense.lic"
+
+then do
+
+terraform init
+
+terraform apply
+
