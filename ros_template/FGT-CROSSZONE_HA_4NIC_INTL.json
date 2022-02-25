@@ -1,0 +1,2047 @@
+{
+  "Description": "This is the fortigate ha ros template",
+  "Metadata": {
+    "ALIYUN::ROS::Interface": {
+      "TemplateTags": [
+        "Create by ROS CDK"
+      ]
+    }
+  },
+  "ROSTemplateFormatVersion": "2015-09-01",
+  "Parameters": {
+    "VpcCidrBlock": {
+      "Type": "String",
+      "Default": "10.0.0.0/8",
+      "AllowedValues": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16"
+      ],
+      "Description": "The IP address range of the VPC"
+    },
+    "ImageId": {
+      "Type": "String",
+      "Default": "m-t4nbig9an5z2pwjtpmcb",
+      "Description": "Instance Image ID, see detail<b><a href='https://'",
+      "Label": "ImageID"
+    },
+    "VpcName": {
+      "Type": "String",
+      "Default": "fortigateVPC",
+      "ConstraintDescription": "[2, 128] alphanumeric characters",
+      "Description": "VPC name, 2 to 128 characters in length, beginning with size letters or Chinese characters, including Numbers, '_' or '-'.",
+      "MaxLength": 128,
+      "MinLength": 2,
+      "Label": "VPC Name"
+    },
+    "VSwitchCidrBlock-0-11": {
+      "Type": "String",
+      "Default": "10.0.11.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "VSwitchCidrBlock-0-12": {
+      "Type": "String",
+      "Default": "10.0.12.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "VSwitchCidrBlock-0-13": {
+      "Type": "String",
+      "Default": "10.0.13.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "VSwitchCidrBlock-0-14": {
+      "Type": "String",
+      "Default": "10.0.14.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "VSwitchCidrBlock-1-11": {
+      "Type": "String",
+      "Default": "10.0.21.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "VSwitchCidrBlock-1-12": {
+      "Type": "String",
+      "Default": "10.0.22.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "VSwitchCidrBlock-1-13": {
+      "Type": "String",
+      "Default": "10.0.23.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "VSwitchCidrBlock-1-14": {
+      "Type": "String",
+      "Default": "10.0.24.0/24",
+      "Description": "vswitchcidr",
+      "Label": "vswitchcidr"
+    },
+    "fgtAzoneId-0": {
+      "Type": "String",
+      "Label": "Zone ID",
+      "AssociationProperty": "ALIYUN::ECS::Instance::ZoneId"
+    },
+    "fgtAzoneId-1": {
+      "Type": "String",
+      "Label": "Zone ID",
+      "AssociationProperty": "ALIYUN::ECS::Instance::ZoneId"
+    },
+    "InstanceType": {
+      "Type": "String",
+      "Default": "ecs.hfc6.2xlarge",
+      "AllowedValues": [
+        "ecs.hfc6.large",
+        "ecs.hfc6.xlarge",
+        "ecs.hfc6.2xlarge",
+        "ecs.hfc5.large",
+        "ecs.hfc5.2xlarge",
+        "ecs.c5.large",
+        "ecs.sn1ne.large",
+        "ecs.sn1ne.xlarge",
+        "ecs.sn1ne.2xlarge"
+      ],
+      "Description": "<b><font color='blue'>Instance Specification Family</font></a></b>",
+      "Label": "Instance Type",
+      "AssociationProperty": "ALIYUN::ECS::Instance::InstanceType"
+    },
+    "ramRoleName-1645761840038": {
+      "Type": "String",
+      "Default": "fortigateRamRoleforHA",
+      "Description": "fortigateRamRoleforHA"
+    }
+  },
+  "Resources": {
+    "vpc": {
+      "Type": "ALIYUN::ECS::VPC",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VpcCidrBlock"
+        },
+        "Description": "vpc for fortigate ",
+        "EnableIpv6": false,
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ],
+        "VpcName": "fortigateVPC"
+      }
+    },
+    "vswSwitch-0-0": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-0-11"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-0"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "vswSwitch-0-1": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-0-12"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-0"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "vswSwitch-0-2": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-0-13"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-0"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "vswSwitch-0-3": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-0-14"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-0"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "vswSwitch-1-0": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-1-11"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-1"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "vswSwitch-1-1": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-1-12"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-1"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "vswSwitch-1-2": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-1-13"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-1"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "vswSwitch-1-3": {
+      "Type": "ALIYUN::ECS::VSwitch",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VSwitchCidrBlock-1-14"
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "ZoneId": {
+          "Ref": "fgtAzoneId-1"
+        },
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ]
+      },
+      "DependsOn": [
+        "vpc"
+      ]
+    },
+    "security-group": {
+      "Type": "ALIYUN::ECS::SecurityGroup",
+      "Properties": {
+        "SecurityGroupName": "sg-for-everything-for-demo",
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ],
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        }
+      }
+    },
+    "ros-22": {
+      "Type": "ALIYUN::ECS::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "PortRange": "22/22",
+        "NicType": "intranet",
+        "Priority": 1,
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        },
+        "SourceCidrIp": "0.0.0.0/0"
+      }
+    },
+    "ros-3389": {
+      "Type": "ALIYUN::ECS::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "PortRange": "3389/3389",
+        "NicType": "intranet",
+        "Priority": 1,
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        },
+        "SourceCidrIp": "0.0.0.0/0"
+      }
+    },
+    "ros-80": {
+      "Type": "ALIYUN::ECS::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "PortRange": "80/80",
+        "NicType": "intranet",
+        "Priority": 1,
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        },
+        "SourceCidrIp": "0.0.0.0/0"
+      }
+    },
+    "ros-8443": {
+      "Type": "ALIYUN::ECS::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "PortRange": "8443/8443",
+        "NicType": "intranet",
+        "Priority": 1,
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        },
+        "SourceCidrIp": "0.0.0.0/0"
+      }
+    },
+    "ros-cdk-sg-ingress-icmp": {
+      "Type": "ALIYUN::ECS::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "icmp",
+        "PortRange": "-1/-1",
+        "NicType": "intranet",
+        "Priority": 1,
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        },
+        "SourceCidrIp": "0.0.0.0/0"
+      }
+    },
+    "name": {
+      "Type": "ALIYUN::RAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "1",
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ecs.aliyuncs.com"
+                ]
+              }
+            }
+          ]
+        },
+        "RoleName": {
+          "Ref": "ramRoleName-1645761840038"
+        },
+        "DeletionForce": false
+      }
+    },
+    "policy": {
+      "Type": "ALIYUN::RAM::ManagedPolicy",
+      "Properties": {
+        "PolicyName": "fortigateHAPolicy",
+        "PolicyDocument": {
+          "Version": "1",
+          "Statement": [
+            {
+              "Action": [
+                "vpc:*",
+                "vpc:*EipAddress*",
+                "vpc:UntagResources",
+                "vpc:TagResources",
+                "vpc:*VSwitch*",
+                "ecs:*",
+                "ecs:DescribeInstances",
+                "vpc:DescribeVpcs",
+                "vpc:DescribeVSwitches",
+                "vpc:*Eip*",
+                "vpc:*HighDefinitionMonitor*",
+                "vpc:*HaVip*",
+                "vpc:*RouteTable*",
+                "vpc:*VRouter*",
+                "vpc:*RouteEntry*",
+                "vpc:*VSwitch*",
+                "vpc:*Vpc*",
+                "vpc:*Cen*",
+                "vpc:*Tag*",
+                "vpc:*NetworkAcl*",
+                "ecs:*Instance*"
+              ],
+              "Resource": [
+                "*"
+              ],
+              "Effect": "Allow"
+            }
+          ]
+        }
+      }
+    },
+    "fgt_ecs-0-0": {
+      "Type": "ALIYUN::ECS::Instance",
+      "Properties": {
+        "ImageId": {
+          "Ref": "ImageId"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "AllocatePublicIP": true,
+        "AutoRenew": "False",
+        "AutoRenewPeriod": 1,
+        "InstanceChargeType": "PostPaid",
+        "InstanceName": "fortigate-0-0",
+        "InternetChargeType": "PayByTraffic",
+        "InternetMaxBandwidthIn": 200,
+        "InternetMaxBandwidthOut": 1,
+        "IoOptimized": "optimized",
+        "Period": 1,
+        "PeriodUnit": "Month",
+        "PrivateIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".11.11"
+            ]
+          ]
+        },
+        "RamRoleName": {
+          "Fn::GetAtt": [
+            "name",
+            "RoleName"
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        },
+        "SystemDiskCategory": "cloud_essd",
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ],
+        "UserData": {
+          "Fn::Join": [
+            "",
+            [
+              " \nconfig system global\nset hostname \"FGT1-0-0\"\nset admin-sport 8443\nend\nconfig system interface\nedit \"port1\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".11.11/24   \nset allowaccess ping https ssh \nnext\nedit \"port2\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".12.11/24\nnext\nedit \"port3\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".13.11/24  \nset allowaccess ping  https ssh \nnext\nedit \"port4\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".14.11/24 \nset allowaccess ping  https ssh \nnext\nend\nconfig router static\nedit 1\nset gateway ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".11.253\nset device \"port1\"\nset distance 2\nnext\nend\nconfig system ha\nset group-name \"fgtha\"\nset mode a-p\nset hbdev port2  50\nset session-pickup enable\nset ha-mgmt-status enable\nconfig ha-mgmt-interface\nedit 1\nset interface port2\nset gateway ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".12.253\nnext\nend\nset priority 100\nset monitor port1\nset unicast-hb enable\nset unicast-hb-peerip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".22.12\nend\nconfig system auto-script\nedit \"test\"\nset interval 120\nset repeat 2\nset start auto\nset script \"\nconfig system interface\nedit port2\nset mode dhcp\nset allowaccess ping  https ssh\nnext\nedit port3\nset mode dhcp\nset allowaccess ping  https ssh\nnext\nedit port4 \nset mode dhcp\nset allowaccess ping  https ssh\nnext\nend\nconfig system ha\nset group-name \"ha\"\nset mode a-p\nset hbdev port2  50\nset ha-mgmt-status enable\nconfig ha-mgmt-interface\nedit 1\nset interface port2\nset gateway ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".12.253\nnext\nend\nset monitor \"port1\"\nset unicast-hb enable\nset unicast-hb-peerip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".22.12\nend\n\"\nnext\n                  \nend\n\n\n                          "
+            ]
+          ]
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-0-0",
+            "VSwitchId"
+          ]
+        }
+      }
+    },
+    "fgt_ecs-1-0": {
+      "Type": "ALIYUN::ECS::Instance",
+      "Properties": {
+        "ImageId": {
+          "Ref": "ImageId"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "AllocatePublicIP": true,
+        "AutoRenew": "False",
+        "AutoRenewPeriod": 1,
+        "InstanceChargeType": "PostPaid",
+        "InstanceName": "fortigate-1-0",
+        "InternetChargeType": "PayByTraffic",
+        "InternetMaxBandwidthIn": 200,
+        "InternetMaxBandwidthOut": 1,
+        "IoOptimized": "optimized",
+        "Period": 1,
+        "PeriodUnit": "Month",
+        "PrivateIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".21.12"
+            ]
+          ]
+        },
+        "RamRoleName": {
+          "Fn::GetAtt": [
+            "name",
+            "RoleName"
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        },
+        "SystemDiskCategory": "cloud_essd",
+        "Tags": [
+          {
+            "Value": "andy",
+            "Key": "owner"
+          }
+        ],
+        "UserData": {
+          "Fn::Join": [
+            "",
+            [
+              " \nconfig system global\nset hostname \"FGT1-1-0\"\nset admin-sport 8443\nend\nconfig system interface\nedit \"port1\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".21.12/24   \nset allowaccess ping https ssh \nnext\nedit \"port2\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".22.12/24\nnext\nedit \"port3\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".23.12/24  \nset allowaccess ping  https ssh \nnext\nedit \"port4\"\nset mode static\nset ip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".24.12/24 \nset allowaccess ping  https ssh \nnext\nend\nconfig router static\nedit 1\nset gateway ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".21.253\nset device \"port1\"\nset distance 2\nnext\nend\nconfig system ha\nset group-name \"fgtha\"\nset mode a-p\nset hbdev port2  100\nset session-pickup enable\nset ha-mgmt-status enable\nconfig ha-mgmt-interface\nedit 1\nset interface port2\nset gateway ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".22.253\nnext\nend\nset priority 100\nset monitor port1\nset unicast-hb enable\nset unicast-hb-peerip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".12.11\nend\nconfig system auto-script\nedit \"test\"\nset interval 120\nset repeat 2\nset start auto\nset script \"\nconfig system interface\nedit port2\nset mode dhcp\nset allowaccess ping  https ssh\nnext\nedit port3\nset mode dhcp\nset allowaccess ping  https ssh\nnext\nedit port4 \nset mode dhcp\nset allowaccess ping  https ssh\nnext\nend\nconfig system ha\nset group-name \"ha\"\nset mode a-p\nset hbdev port2  100\nset ha-mgmt-status enable\nconfig ha-mgmt-interface\nedit 1\nset interface port2\nset gateway ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".22.253\nnext\nend\nset monitor \"port1\"\nset unicast-hb enable\nset unicast-hb-peerip ",
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".12.11\nend\n\"\nnext\n                  \nend\n\n\n                          "
+            ]
+          ]
+        },
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        },
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-1-0",
+            "VSwitchId"
+          ]
+        }
+      }
+    },
+    "eni-0-0-1": {
+      "Type": "ALIYUN::ECS::NetworkInterface",
+      "Properties": {
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-0-1",
+            "VSwitchId"
+          ]
+        },
+        "PrimaryIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".12.11"
+            ]
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "vswSwitch-0-1"
+      ]
+    },
+    "eni-0-0-2": {
+      "Type": "ALIYUN::ECS::NetworkInterface",
+      "Properties": {
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-0-2",
+            "VSwitchId"
+          ]
+        },
+        "PrimaryIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".13.11"
+            ]
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "eni-0-0-1"
+      ]
+    },
+    "eni-0-0-3": {
+      "Type": "ALIYUN::ECS::NetworkInterface",
+      "Properties": {
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-0-3",
+            "VSwitchId"
+          ]
+        },
+        "PrimaryIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".14.11"
+            ]
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "eni-0-0-2"
+      ]
+    },
+    "eni-1-0-1": {
+      "Type": "ALIYUN::ECS::NetworkInterface",
+      "Properties": {
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-1-1",
+            "VSwitchId"
+          ]
+        },
+        "PrimaryIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".22.12"
+            ]
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "vswSwitch-1-1"
+      ]
+    },
+    "eni-1-0-2": {
+      "Type": "ALIYUN::ECS::NetworkInterface",
+      "Properties": {
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-1-2",
+            "VSwitchId"
+          ]
+        },
+        "PrimaryIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".23.12"
+            ]
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "eni-1-0-1"
+      ]
+    },
+    "eni-1-0-3": {
+      "Type": "ALIYUN::ECS::NetworkInterface",
+      "Properties": {
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-1-3",
+            "VSwitchId"
+          ]
+        },
+        "PrimaryIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".24.12"
+            ]
+          ]
+        },
+        "SecurityGroupId": {
+          "Fn::GetAtt": [
+            "security-group",
+            "SecurityGroupId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "eni-1-0-2"
+      ]
+    },
+    "fgtMmgmtEip-0-0": {
+      "Type": "ALIYUN::VPC::EIP",
+      "Properties": {
+        "AutoPay": false,
+        "Bandwidth": 1,
+        "DeletionProtection": false,
+        "Description": "EIP for fortigate-0-0",
+        "InstanceChargeType": "Postpaid",
+        "InternetChargeType": "PayByTraffic",
+        "Period": 1,
+        "PricingCycle": "Month"
+      },
+      "DependsOn": [
+        "fgt_ecs-0-0"
+      ]
+    },
+    "fgtMgmtEipAsso-0-0": {
+      "Type": "ALIYUN::VPC::EIPAssociation",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "fgtMmgmtEip-0-0",
+            "AllocationId"
+          ]
+        },
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "eni-0-0-1",
+            "NetworkInterfaceId"
+          ]
+        },
+        "PrivateIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-0-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".12.11"
+            ]
+          ]
+        }
+      }
+    },
+    "fgtMmgmtEip-1-0": {
+      "Type": "ALIYUN::VPC::EIP",
+      "Properties": {
+        "AutoPay": false,
+        "Bandwidth": 1,
+        "DeletionProtection": false,
+        "Description": "EIP for fortigate-1-0",
+        "InstanceChargeType": "Postpaid",
+        "InternetChargeType": "PayByTraffic",
+        "Period": 1,
+        "PricingCycle": "Month"
+      },
+      "DependsOn": [
+        "fgt_ecs-1-0"
+      ]
+    },
+    "fgtMgmtEipAsso-1-0": {
+      "Type": "ALIYUN::VPC::EIPAssociation",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "fgtMmgmtEip-1-0",
+            "AllocationId"
+          ]
+        },
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "eni-1-0-1",
+            "NetworkInterfaceId"
+          ]
+        },
+        "PrivateIpAddress": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::Select": [
+                  0,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".",
+              {
+                "Fn::Select": [
+                  1,
+                  {
+                    "Fn::Split": [
+                      ".",
+                      {
+                        "Ref": "VSwitchCidrBlock-1-11"
+                      }
+                    ]
+                  }
+                ]
+              },
+              ".22.12"
+            ]
+          ]
+        }
+      }
+    },
+    "custom_route_tables-0-0": {
+      "Type": "ALIYUN::VPC::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "fgt_ecs-0-0"
+      ]
+    },
+    "custom_route_tables-1-0": {
+      "Type": "ALIYUN::VPC::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Fn::GetAtt": [
+            "vpc",
+            "VpcId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "fgt_ecs-1-0"
+      ]
+    },
+    "custom_route_table_attachment_vsw-0-0}": {
+      "Type": "ALIYUN::VPC::RouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "custom_route_tables-0-0",
+            "RouteTableId"
+          ]
+        },
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-0-1",
+            "VSwitchId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "vswSwitch-0-1",
+        "fgt_ecs-0-0"
+      ]
+    },
+    "custom_route_table_attachment_vsw-1-0}": {
+      "Type": "ALIYUN::VPC::RouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "custom_route_tables-1-0",
+            "RouteTableId"
+          ]
+        },
+        "VSwitchId": {
+          "Fn::GetAtt": [
+            "vswSwitch-1-1",
+            "VSwitchId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "vswSwitch-1-1",
+        "fgt_ecs-1-0"
+      ]
+    },
+    "myrouteEntry1-0-0": {
+      "Type": "ALIYUN::ECS::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "custom_route_table_attachment_vsw-0-0}",
+            "RouteTableId"
+          ]
+        },
+        "NextHopId": {
+          "Fn::GetAtt": [
+            "eni-0-0-2",
+            "NetworkInterfaceId"
+          ]
+        },
+        "NextHopType": "NetworkInterface"
+      },
+      "DependsOn": [
+        "eni-0-0-1"
+      ]
+    },
+    "myrouteEntry1-1-0": {
+      "Type": "ALIYUN::ECS::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "custom_route_table_attachment_vsw-1-0}",
+            "RouteTableId"
+          ]
+        },
+        "NextHopId": {
+          "Fn::GetAtt": [
+            "eni-1-0-2",
+            "NetworkInterfaceId"
+          ]
+        },
+        "NextHopType": "NetworkInterface"
+      },
+      "DependsOn": [
+        "eni-1-0-1"
+      ]
+    },
+    "myrouteEntry2-0-0": {
+      "Type": "ALIYUN::ECS::Route",
+      "Properties": {
+        "DestinationCidrBlock": "1.1.1.1/32",
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "custom_route_table_attachment_vsw-0-0}",
+            "RouteTableId"
+          ]
+        },
+        "NextHopId": {
+          "Fn::GetAtt": [
+            "eni-0-0-2",
+            "NetworkInterfaceId"
+          ]
+        },
+        "NextHopType": "NetworkInterface"
+      },
+      "DependsOn": [
+        "eni-0-0-1"
+      ]
+    },
+    "myrouteEntry2-1-0": {
+      "Type": "ALIYUN::ECS::Route",
+      "Properties": {
+        "DestinationCidrBlock": "1.1.1.1/32",
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "custom_route_table_attachment_vsw-1-0}",
+            "RouteTableId"
+          ]
+        },
+        "NextHopId": {
+          "Fn::GetAtt": [
+            "eni-1-0-2",
+            "NetworkInterfaceId"
+          ]
+        },
+        "NextHopType": "NetworkInterface"
+      },
+      "DependsOn": [
+        "eni-1-0-1"
+      ]
+    },
+    "fortigateRamAttachment": {
+      "Type": "ALIYUN::RAM::AttachPolicyToRole",
+      "Properties": {
+        "PolicyName": {
+          "Fn::GetAtt": [
+            "policy",
+            "PolicyName"
+          ]
+        },
+        "PolicyType": "Custom",
+        "RoleName": {
+          "Fn::GetAtt": [
+            "name",
+            "RoleName"
+          ]
+        }
+      },
+      "DependsOn": [
+        "name",
+        "policy",
+        "fgt_ecs-0-0",
+        "fgt_ecs-1-0"
+      ]
+    },
+    "myAttachment-0-0-1": {
+      "Type": "ALIYUN::ECS::NetworkInterfaceAttachment",
+      "Properties": {
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "fgt_ecs-0-0",
+            "InstanceId"
+          ]
+        },
+        "NetworkInterfaceId": {
+          "Fn::GetAtt": [
+            "eni-0-0-1",
+            "NetworkInterfaceId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "fgt_ecs-0-0",
+        "eni-0-0-1",
+        "fgt_ecs-1-0"
+      ]
+    },
+    "myAttachment-0-0-2": {
+      "Type": "ALIYUN::ECS::NetworkInterfaceAttachment",
+      "Properties": {
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "fgt_ecs-0-0",
+            "InstanceId"
+          ]
+        },
+        "NetworkInterfaceId": {
+          "Fn::GetAtt": [
+            "eni-0-0-2",
+            "NetworkInterfaceId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "fgt_ecs-0-0",
+        "eni-0-0-2",
+        "myAttachment-0-0-1",
+        "fgt_ecs-1-0"
+      ]
+    },
+    "myAttachment-0-0-3": {
+      "Type": "ALIYUN::ECS::NetworkInterfaceAttachment",
+      "Properties": {
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "fgt_ecs-0-0",
+            "InstanceId"
+          ]
+        },
+        "NetworkInterfaceId": {
+          "Fn::GetAtt": [
+            "eni-0-0-3",
+            "NetworkInterfaceId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "fgt_ecs-0-0",
+        "eni-0-0-3",
+        "myAttachment-0-0-2",
+        "fgt_ecs-1-0"
+      ]
+    },
+    "myAttachment-1-0-1": {
+      "Type": "ALIYUN::ECS::NetworkInterfaceAttachment",
+      "Properties": {
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "fgt_ecs-1-0",
+            "InstanceId"
+          ]
+        },
+        "NetworkInterfaceId": {
+          "Fn::GetAtt": [
+            "eni-1-0-1",
+            "NetworkInterfaceId"
+          ]
+        }
+      }
+    },
+    "myAttachment-1-0-2": {
+      "Type": "ALIYUN::ECS::NetworkInterfaceAttachment",
+      "Properties": {
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "fgt_ecs-1-0",
+            "InstanceId"
+          ]
+        },
+        "NetworkInterfaceId": {
+          "Fn::GetAtt": [
+            "eni-1-0-2",
+            "NetworkInterfaceId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "myAttachment-1-0-1"
+      ]
+    },
+    "myAttachment-1-0-3": {
+      "Type": "ALIYUN::ECS::NetworkInterfaceAttachment",
+      "Properties": {
+        "InstanceId": {
+          "Fn::GetAtt": [
+            "fgt_ecs-1-0",
+            "InstanceId"
+          ]
+        },
+        "NetworkInterfaceId": {
+          "Fn::GetAtt": [
+            "eni-1-0-3",
+            "NetworkInterfaceId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "myAttachment-1-0-2"
+      ]
+    }
+  },
+  "Outputs": {
+    "PublicIp-0-0": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Fn::GetAtt": [
+                "fgt_ecs-0-0",
+                "PublicIp"
+              ]
+            },
+            ":443"
+          ]
+        ]
+      }
+    },
+    "Management EIP-0-0": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Fn::GetAtt": [
+                "fgtMmgmtEip-0-0",
+                "EipAddress"
+              ]
+            },
+            ":443"
+          ]
+        ]
+      }
+    },
+    "PublicIp-1-0": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Fn::GetAtt": [
+                "fgt_ecs-1-0",
+                "PublicIp"
+              ]
+            },
+            ":443"
+          ]
+        ]
+      }
+    },
+    "Management EIP-1-0": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Fn::GetAtt": [
+                "fgtMmgmtEip-1-0",
+                "EipAddress"
+              ]
+            },
+            ":443"
+          ]
+        ]
+      }
+    }
+  }
+}
+
