@@ -1,0 +1,5 @@
+license="/home/i/FGVMULTM22000750.lic"
+instance="ecs.hfc6.large"
+instance_ami="m-2zec5gpamoc7qaxzrx8x"
+product_china="^Fortinet FortiGate-6.4.5"
+account_region="china"

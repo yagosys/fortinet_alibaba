@@ -1,6 +1,4 @@
 resource "alicloud_cen_transit_router_vpc_attachment" "atta_ack1" {
-// depends_on =[alicloud_cen_transit_router_vpc_attachment.hubvpc]
-//depends_on =[alicloud_cen_transit_router.default,alicloud_vpc.ack1_vpc_default,time_sleep.wait_600_seconds,alicloud_cen_transit_router_vpc_attachment.hubvpc]
  depends_on =[alicloud_cen_transit_router_vpc_attachment.hubvpc]
 
   cen_id            = alicloud_cen_instance.default.id

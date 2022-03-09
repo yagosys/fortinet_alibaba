@@ -1,0 +1,106 @@
+//terraform import fortios_router_static.static_route_to_cidr_via_ipsec_tunnel  1
+
+resource "fortios_router_static" "google_web" {
+ count = length(var.tunnel_info)-1
+
+ device   = format("%s_%s", var.tunnel_name_prefix, count.index + 1)
+
+ internet_service    = 65537
+ gateway = "169.254.100.1"
+ status = "enable"
+  depends_on = [
+    fortios_vpnipsec_phase1interface.phase1,
+    fortios_vpnipsec_phase2interface.phase2,
+  ]
+
+ }
+
+resource "fortios_router_static" "google_65542_ssh" {
+ count = length(var.tunnel_info)-1
+
+ device   = format("%s_%s", var.tunnel_name_prefix, count.index + 1)
+
+ internet_service    = 65542
+ gateway = "169.254.100.1"
+ status = "enable"
+  depends_on = [
+    fortios_vpnipsec_phase1interface.phase1,
+    fortios_vpnipsec_phase2interface.phase2,
+  ]
+
+ }
+
+resource "fortios_router_static" "google_65641_googlecloud" {
+ count = length(var.tunnel_info)-1
+
+ device   = format("%s_%s", var.tunnel_name_prefix, count.index + 1)
+
+ internet_service    = 65641
+ gateway = "169.254.100.1"
+ status = "enable"
+  depends_on = [
+    fortios_vpnipsec_phase1interface.phase1,
+    fortios_vpnipsec_phase2interface.phase2,
+  ]
+
+ }
+
+resource "fortios_router_static" "google_65539_googledns" {
+ count = length(var.tunnel_info)-1
+
+ device   = format("%s_%s", var.tunnel_name_prefix, count.index + 1)
+
+ internet_service    = 65539
+ gateway = "169.254.100.1"
+ status = "enable"
+  depends_on = [
+    fortios_vpnipsec_phase1interface.phase1,
+    fortios_vpnipsec_phase2interface.phase2,
+  ]
+
+ }
+
+resource "fortios_router_static" "google_65646_google_gmail" {
+ count = length(var.tunnel_info)-1
+
+ device   = format("%s_%s", var.tunnel_name_prefix, count.index + 1)
+
+ internet_service    = 65646
+ gateway = "169.254.100.1"
+ status = "enable"
+  depends_on = [
+    fortios_vpnipsec_phase1interface.phase1,
+    fortios_vpnipsec_phase2interface.phase2,
+  ]
+
+ }
+
+resource "fortios_router_static" "google_65536_google_other" {
+ count = length(var.tunnel_info)-1
+
+ device   = format("%s_%s", var.tunnel_name_prefix, count.index + 1)
+
+ internet_service    = 65536
+ gateway = "169.254.100.1"
+ status = "enable"
+  depends_on = [
+    fortios_vpnipsec_phase1interface.phase1,
+    fortios_vpnipsec_phase2interface.phase2,
+  ]
+
+ }
+
+resource "fortios_router_static" "google_65552_googlertmp" {
+ count = length(var.tunnel_info)-1
+
+ device   = format("%s_%s", var.tunnel_name_prefix, count.index + 1)
+
+ internet_service    = 65552
+ gateway = "169.254.100.1"
+ status = "enable"
+  depends_on = [
+    fortios_vpnipsec_phase1interface.phase1,
+    fortios_vpnipsec_phase2interface.phase2,
+  ]
+
+ }
