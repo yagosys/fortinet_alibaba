@@ -1,0 +1,12 @@
+1. brew install rsyslog
+
+2. /opt/homebrew/etc/rsyslog.conf
+# minimal config file for receiving logs over UDP port 10514
+$ModLoad imudp
+$ModLoad imtcp
+$UDPServerRun 10514
+$TCPServerRun 10514
+*.* /usr/local/var/log/rsyslog-remote.log
+3. create  /usr/local/var/log/rsyslog-remote.log 
+4. chmod 777 /usr/local/var/log/rsyslog-remote.log
+5. brew services restart rsyslog
