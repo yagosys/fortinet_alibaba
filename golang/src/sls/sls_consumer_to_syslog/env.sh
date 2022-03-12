@@ -10,3 +10,4 @@ export SLS_CG=$consumer_group
 export SLS_ConsumerName=$consumer_group
 export SYSLOG_PROTOCOL=udp
 export SYSLOG_SERVER_PORT=localhost:10514
+export SYSLOG_SEARCH_STRING="."
