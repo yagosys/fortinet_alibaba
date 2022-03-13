@@ -28,7 +28,10 @@ func main() {
 		// Could be "begin", "end", "specific time format in time stamp", it's log receiving time.
 		CursorPosition: consumerLibrary.END_CURSOR,
 	}
-
+	if (os.Getenv("SLS_AK_ID") =="") || (os.Getenv("SLS_AK_KEY") == "") || (os.Getenv("SLS_PROJECT") == "") || (os.Getenv("SLS_LOGSTORE") =="") || (os.Getenv("SLS_CG") =="") || (os.Getenv("SYSLOG_PROTOCOL")=="") || (os.Getenv("SYSLOG_SERVER_PORT") == "")  {
+		printUsage()
+		return
+	}
 	consumerWorker := consumerLibrary.InitConsumerWorker(option, process)
 	ch := make(chan os.Signal)
 	signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGUSR1, syscall.SIGUSR2)
@@ -52,6 +55,8 @@ func process(shardId int, logGroupList *sls.LogGroupList) string {
 		syslog.LOG_WARNING|syslog.LOG_DAEMON, "demoslssyslog")
 	if err  !=nil {
 		fmt.Println(err)
+	} else {
+		fmt.Sprintf("SYSLOG SERVER %v Connected with Protocol %v", syslogHostPort,syslogProtocol)
 	}
 	for _,logGroup := range logGroupList.LogGroups {
 		for _,log := range logGroup.Logs {
@@ -69,22 +74,19 @@ func process(shardId int, logGroupList *sls.LogGroupList) string {
 	return ""
 }
 
-func init() {
+func printUsage() {
   fmt.Println(
 `
-PLEASE SET BELOW ENVIROMENT VARIBLE FIRST
+Usage: 
 ----------------------------------
-project_name="YOURPROJECTNAME"
-logstore_name="YOURLOGSTORENAME"
-consumer_group="YOURCONSUMER_GROUPNAME"
 export SLS_ENDPOINT=YOURENDPINT
-export SLS_AK_ID=$(grep access-id ~/.aliyunlogcli | cut -d ' ' -f 3)
-export SLS_AK_KEY=$(grep access-key ~/.aliyunlogcli | cut -d ' ' -f 3)
-export SLS_PROJECT=$project_name
-export SLS_LOGSTORE=$logstore_name
-export SLS_CG=$consumer_group
-export SLS_ConsumerName=$consumer_group
-export SYSLOG_PROTOCOL=udp
-export SYSLOG_SERVER_PORT=localhost:10514
+export SLS_AK_ID="your AK id on alibaba cloud"
+export SLS_AK_KEY="your AK key on alibaba cloud"
+export SLS_PROJECT="your project name"
+export SLS_LOGSTORE="your log store name"
+export SLS_CG="your consumer group name"
+export SLS_ConsumerName="your consumer name"
+export SYSLOG_PROTOCOL="udp or tcp"
+export SYSLOG_SERVER_PORT="your server IP/hostbname and port , eg localhost:10514"
 export SYSLOG_SEARCH_STRING="."	`)
 }
