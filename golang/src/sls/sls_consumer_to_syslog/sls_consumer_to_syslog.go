@@ -51,6 +51,11 @@ func process(shardId int, logGroupList *sls.LogGroupList) string {
 	if searchString == "" {
 		searchString ="."
 	}
+	contentStringFilter :=os.Getenv("SYSLOG_CONTENT_STRING_FILTER")
+	if contentStringFilter == "" {
+		contentStringFilter ="content"
+	}
+
 	sysLog, err :=syslog.Dial(syslogProtocol,syslogHostPort,
 		syslog.LOG_WARNING|syslog.LOG_DAEMON, "demoslssyslog")
 	if err  !=nil {
@@ -61,7 +66,7 @@ func process(shardId int, logGroupList *sls.LogGroupList) string {
 	for _,logGroup := range logGroupList.LogGroups {
 		for _,log := range logGroup.Logs {
 			for _,content := range log.Contents {
-				if *content.Key=="content" {
+				if *content.Key==contentStringFilter {
 					regexp,_ := regexp.Compile(searchString)
 					value:=regexp.FindString(*content.Value)
 					if value !="" {
@@ -88,5 +93,6 @@ export SLS_CG="your consumer group name"
 export SLS_ConsumerName="your consumer name"
 export SYSLOG_PROTOCOL="udp or tcp"
 export SYSLOG_SERVER_PORT="your server IP/hostbname and port , eg localhost:10514"
-export SYSLOG_SEARCH_STRING="."	`)
+export SYSLOG_SEARCH_STRING="."	:optional. default "." means match anything
+export CONTENT_STRING_FILTER="content" :optional, default is "content"`)
 }
