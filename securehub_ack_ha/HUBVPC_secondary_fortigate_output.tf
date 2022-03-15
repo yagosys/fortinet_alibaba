@@ -20,5 +20,5 @@ output "SecondaryFortigateID" {
 }
 
 output "SecondaryFortigateAdminGUI_PORT" {
-  value = var.adminsport
+  value = local.adminsport
 }

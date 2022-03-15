@@ -11,7 +11,8 @@ resource "alicloud_route_table" "tr_landing_rt" {
 }
 
 resource "alicloud_route_table_attachment" "tr_landing_attachment" {
-  depends_on = [alicloud_route_table.tr_landing_rt,time_sleep.wait_60_seconds]
+//  depends_on = [alicloud_route_table.tr_landing_rt,time_sleep.wait_60_seconds]
+    depends_on = [alicloud_route_table_attachment.custom_route_table_attachment_private_zoneb]
   count          = 1
   vswitch_id     = alicloud_vswitch.landing_for_cen_a_0.id
   route_table_id = alicloud_route_table.tr_landing_rt[count.index].id

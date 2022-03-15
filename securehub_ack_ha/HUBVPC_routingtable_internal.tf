@@ -5,7 +5,8 @@ variable "custom_route_table_count" {
 }
 //default for primary fortigate, default route for internal network is torwars primary fortigate secondary inteface (primaryFortigateInterface1)
 resource "alicloud_route_table" "custom_route_tables" {
-  depends_on  = [alicloud_vpc.vpc,time_sleep.wait_360_seconds]
+ // depends_on  = [alicloud_vpc.vpc,time_sleep.wait_360_seconds]
+ depends_on = [alicloud_route_table.tr_landing_rt]
   count       = 1
   vpc_id      = alicloud_vpc.vpc.id
   route_table_name        = "${var.cluster_name}-internal_fortigate_port2-${random_string.random_name_post.result}-${count.index}"
@@ -21,7 +22,7 @@ resource "alicloud_route_table_attachment" "custom_route_table_attachment_privat
 
 resource "alicloud_route_table_attachment" "custom_route_table_attachment_private_zoneb" {
   count          = 1
-  depends_on = [alicloud_route_table.custom_route_tables]
+  depends_on = [alicloud_route_table_attachment.custom_route_table_attachment_private]
   vswitch_id     = alicloud_vswitch.internal_b.id
   route_table_id = alicloud_route_table.custom_route_tables[count.index].id
 }

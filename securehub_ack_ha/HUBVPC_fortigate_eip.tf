@@ -23,7 +23,7 @@ resource "alicloud_eip_association" "eip_asso_fga_mgmt" {
   allocation_id      = alicloud_eip.FgaMgmtEip[count.index].id
   instance_type      = "NetworkInterface"
   instance_id        = alicloud_network_interface.PrimaryFortiGateInterface3.id
-  private_ip_address = "${var.activeport4}"
+  private_ip_address = "${local.activeport4}"
 }
 
 resource "alicloud_eip_association" "eip_asso_fgb_mgmt" {
@@ -31,7 +31,7 @@ resource "alicloud_eip_association" "eip_asso_fgb_mgmt" {
   allocation_id      = alicloud_eip.FgbMgmtEip[count.index].id
   instance_type      = "NetworkInterface"
   instance_id        = alicloud_network_interface.SecondaryFortiGateInterface3.id
-  private_ip_address = "${var.passiveport4}"
+  private_ip_address = "${local.passiveport4}"
 }
 
 

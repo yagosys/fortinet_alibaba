@@ -11,7 +11,7 @@ resource "alicloud_network_interface" "SecondaryFortiGateInterface2" {
   name            = "${var.cluster_name}-Secondary-HA-ENI-${random_string.random_name_post.result}"
   vswitch_id      = alicloud_vswitch.ha_ap_unicast_b.id
   security_groups = ["${alicloud_security_group.SecGroup.id}"]
-  private_ip      = "${var.passiveport3}"
+  private_ip      = "${local.passiveport3}"
 }
 //Forth ENI for secondaryFortigate
 resource "alicloud_network_interface" "SecondaryFortiGateInterface3" {
@@ -19,5 +19,5 @@ resource "alicloud_network_interface" "SecondaryFortiGateInterface3" {
   name            = "${var.cluster_name}-Secondary-MGMT-ENI-${random_string.random_name_post.result}"
   vswitch_id      = alicloud_vswitch.mgmt_b.id
   security_groups = ["${alicloud_security_group.SecGroup.id}"]
-  private_ip      = "${var.passiveport4}"
+  private_ip      = "${local.passiveport4}"
 }
