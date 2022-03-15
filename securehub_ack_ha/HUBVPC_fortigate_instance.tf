@@ -7,7 +7,7 @@ resource "alicloud_instance" "PrimaryFortigate" {
 
  instance_type = coalesce(length(data.alicloud_zones.default_hfc6.zones) >1  ? data.alicloud_zones.default_hfc6.available_instance_type : "", length(data.alicloud_zones.default_c5.zones) >1  ? data.alicloud_zones.default_c5.available_instance_type : "", length(data.alicloud_zones.default_hfc5.zones) > 1 ?data.alicloud_zones.default_hfc5.available_instance_type : "", length(data.alicloud_zones.default_sn1ne.zones) >1 ?data.alicloud_zones.default_sn1ne.available_instance_type : "")
 
-//  internet_max_bandwidth_out = 100
+  internet_max_bandwidth_out= local.num_secondary_instances ==0 ? 100 : 0
   instance_name        = "${var.cluster_name}-Primary-FortiGate-${random_string.random_name_post.result}"
   vswitch_id           = "${alicloud_vswitch.external_a_0.id}"
   private_ip           = "${var.primary_fortigate_private_ip}"
@@ -25,6 +25,7 @@ resource "alicloud_instance" "PrimaryFortigate" {
 
 
 resource "alicloud_instance" "SecondaryFortigate" {
+  count=local.num_secondary_instances
   availability_zone = data.alicloud_zones.default.zones.1.id
   security_groups   = alicloud_security_group.SecGroup.*.id
 
@@ -35,7 +36,7 @@ resource "alicloud_instance" "SecondaryFortigate" {
 //  instance_type = data.alicloud_instance_types.types_ds.instance_type_family
  instance_type = coalesce(length(data.alicloud_zones.default_hfc6.zones) >1  ? data.alicloud_zones.default_hfc6.available_instance_type : "", length(data.alicloud_zones.default_c5.zones) >1  ? data.alicloud_zones.default_c5.available_instance_type : "", length(data.alicloud_zones.default_hfc5.zones) > 1 ?data.alicloud_zones.default_hfc5.available_instance_type : "", length(data.alicloud_zones.default_sn1ne.zones) >1 ?data.alicloud_zones.default_sn1ne.available_instance_type : "")
 
-//internet_max_bandwidth_out=100
+  internet_max_bandwidth_out= local.num_secondary_instances ==0 ? 100 : 0
   instance_name = "${var.cluster_name}-Secondary-FortiGate-${random_string.random_name_post.result}"
   vswitch_id    = alicloud_vswitch.external_b.id
   private_ip    = var.secondary_fortigate_private_ip

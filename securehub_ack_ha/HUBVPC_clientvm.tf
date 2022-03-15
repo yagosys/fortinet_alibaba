@@ -103,7 +103,9 @@ resource "alicloud_instance" "client-vm" {
    }
 
 connection {
-  host = "${alicloud_instance.PrimaryFortigate.public_ip}"
+//  host = "${alicloud_instance.PrimaryFortigate.public_ip}"
+//host = "${element(aws_instance.example.*.public_ip, count.index)}"
+  host= local.num_secondary_instances=="1" ? alicloud_eip.PublicInternetIp.ip_address : alicloud_instance.PrimaryFortigate.public_ip
   type = "ssh"
   port = "${var.client_vm_ssh_port}"
   user = "${var.client_vm_username}"
