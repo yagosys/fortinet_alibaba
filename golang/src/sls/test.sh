@@ -1,0 +1,10 @@
+project_name="testtestasdfadsf"
+logstore_name=$project_name
+consumer_group=$project_name
+export SLS_ENDPOINT=cn-hongkong.log.aliyuncs.com
+export SLS_AK_ID=$(grep access-id ~/.aliyunlogcli | cut -d ' ' -f 3)
+export SLS_AK_KEY=$(grep access-key ~/.aliyunlogcli | cut -d ' ' -f 3)
+export SLS_PROJECT=$project_name
+export SLS_LOGSTORE=$logstore_name
+export SLS_CG=$consumer_group
+export SYSLOG_SERVER='127.0.0.1'
