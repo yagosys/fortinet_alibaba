@@ -47,8 +47,8 @@ variable "fortiadc_instance_ami" {
 
 variable "fortiadc_instance" {
   type    = string
-  default = "auto" 
-//  default="ecs.ic5.large"
+//  default = "auto" 
+  default="ecs.hfc6.large"
  description = "FORTIGATE实例的实例类型，默认auto为按照CPU，MEMORY自动选择"
 }
 

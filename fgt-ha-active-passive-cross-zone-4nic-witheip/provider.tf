@@ -1,14 +1,6 @@
 provider "alicloud" {
-  profile = "default"
-  region  = var.region
-}
-terraform {
-  required_providers {
-    alicloud = {
-      source = "aliyun/alicloud"
-      version = "1.157.0"
-    }
-  }
+	profile = var.account_region== "china" ? "andywang" : "default"
+  	region  = var.region
 }
 
 

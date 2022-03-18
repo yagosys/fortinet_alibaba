@@ -1,0 +1,30 @@
+{
+  "config_name": "test",
+  "filePattern": "syslog",
+  "logstore_name": "test",
+  "fileEncoding": "utf8",
+  "regex": "(.*)",
+  "mergeType": "topic",
+  "logType": "common_reg_log",
+  "time_format": "",
+  "logPath": "/var/log",
+  "endpoint": "cn-hongkong-intranet.log.aliyuncs.com",
+  "logBeginRegex": "\\w+\\s\\s.*",
+  "key": [
+      "content"
+    ],
+  "reg_keys": [
+    "time",
+    "value"
+  ],
+  "topic_format": "none",
+  "filter_keys": [
+    "time",
+    "value"
+  ],
+  "filter_keys_reg": [
+    "time",
+    "value"
+  ],
+  "logSample": "Mar  9 18:49:11 ecs-148531 ilogtaild[1294813]: ilogtail is running\nMar  9 18:49:11 ecs-148531 systemd[1]: Finished ilogtail.\nMar  9 18:49:38 ecs-148531 systemd[1]: ilogtaild.service: Succeeded.\nMar  9 18:49:38 ecs-148531 systemd[1]: Stopped ilogtail.\nMar  9 18:49:54 ecs-148531 systemd[1]: Starting ilogtail...\n"
+}

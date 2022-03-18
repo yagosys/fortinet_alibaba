@@ -1,0 +1,13 @@
+{
+  "machine_list": [
+    "192.168.0.175"
+  ],
+  "machineIdentifyType": "ip",
+  "group_name": "iecs-148531",
+  "group_type": "",
+  "group_attribute": {
+    "externalName": "",
+    "groupTopic": ""
+  }
+}
+
