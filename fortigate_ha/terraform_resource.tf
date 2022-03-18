@@ -13,7 +13,8 @@ resource "random_string" "random_name_post" {
 
 
 
-resource "time_sleep" "wait_120_seconds_after_create_Primary_fortigate" {
+resource "time_sleep" "wait_180_seconds_after_create_Primary_fortigate" {
+//this is for give fortigate to apply license and form HA before associate EIP
  depends_on = [alicloud_instance.PrimaryFortigate]
  count = var.num_secondary_instances=="1"? 1:0
  create_duration = "180s"

@@ -13,9 +13,6 @@ variable "ALIYUN__region" {
   default = "cn-hongkong" //Default Region
 }
 
-variable "cen_region" {
-  default = "cn-hongkong"
-}
 
 variable "client_vm_password" {
   type = string

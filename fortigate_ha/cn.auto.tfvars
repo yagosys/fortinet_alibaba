@@ -1,5 +1,6 @@
-fortigate_instance_ami="m-j6cj2liju58d88zmgbdg" //fortigate hongkong china
-region="cn-hongkong"
+//fortigate_instance_ami="m-j6cj2liju58d88zmgbdg" //fortigate hongkong china
+fortigate_instance_ami="auto"
+region="cn-zhangjiakou"
 account_region="china"
 ALIYUN__region="cn-hongkong"
 activefgtlicense="./FGVMULTM22000750.lic"
