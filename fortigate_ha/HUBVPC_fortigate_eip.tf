@@ -1,12 +1,12 @@
 resource "alicloud_eip" "FgaMgmtEip" {
-  count = var.num_secondary_instances
+  count = var.mgmt_eip=="1" ? 1:0
   name                 = "EIP1"
   bandwidth            = "1"
   internet_charge_type = "PayByTraffic"
 }
 
 resource "alicloud_eip" "FgbMgmtEip" {
-  count = var.num_secondary_instances
+  count = var.num_secondary_instances=="1" ? 1:0
   name                 = "EIP2"
   bandwidth            = "1"
   internet_charge_type = "PayByTraffic"
@@ -14,7 +14,9 @@ resource "alicloud_eip" "FgbMgmtEip" {
 
 
 resource "alicloud_eip_association" "eip_asso_fga_mgmt" {
-  count = var.num_secondary_instances
+  count = var.mgmt_eip=="1" ? 1:0
+
+ depends_on = [time_sleep.wait_60_seconds_after_create_primary_fortigate_interface3]
   allocation_id      = alicloud_eip.FgaMgmtEip[count.index].id
   instance_type      = "NetworkInterface"
   instance_id        = alicloud_network_interface.PrimaryFortiGateInterface3.id
@@ -22,7 +24,8 @@ resource "alicloud_eip_association" "eip_asso_fga_mgmt" {
 }
 
 resource "alicloud_eip_association" "eip_asso_fgb_mgmt" {
-  count = var.num_secondary_instances
+ depends_on = [time_sleep.wait_60_seconds_after_create_secondary_fortigate_interface3,alicloud_eip.FgbMgmtEip]
+  count = var.mgmt_eip=="1" ? 1:0
   allocation_id      = alicloud_eip.FgbMgmtEip[count.index].id
   instance_type      = "NetworkInterface"
   instance_id        = alicloud_network_interface.SecondaryFortiGateInterface3.id

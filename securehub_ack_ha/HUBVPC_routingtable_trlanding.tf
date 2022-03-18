@@ -11,27 +11,18 @@ resource "alicloud_route_table" "tr_landing_rt" {
 }
 
 resource "alicloud_route_table_attachment" "tr_landing_attachment" {
-//  depends_on = [alicloud_route_table.tr_landing_rt,time_sleep.wait_60_seconds]
-    depends_on = [alicloud_route_table_attachment.custom_route_table_attachment_private_zoneb]
+  //  depends_on = [alicloud_route_table_attachment.custom_route_table_attachment_private_zoneb]
+  depends_on = [time_sleep.wait_60_seconds_after_create_custom_rt]
   count          = 1
   vswitch_id     = alicloud_vswitch.landing_for_cen_a_0.id
   route_table_id = alicloud_route_table.tr_landing_rt[count.index].id
 }
 
 resource "alicloud_route_table_attachment" "tr_landing_attachment_1" {
-//  depends_on = [alicloud_route_table.tr_landing_rt]
-//  depends_on = [alicloud_route_table_attachment.tr_landing_attachment,time_sleep.wait_60_seconds]
   depends_on = [alicloud_route_table_attachment.tr_landing_attachment]
   count          = 1
   vswitch_id     = alicloud_vswitch.landing_for_cen_b_1.id
   route_table_id = alicloud_route_table.tr_landing_rt[count.index].id
 }
 
-//resource "alicloud_route_table_attachment" "tr_landing_attachment_2" {
-//  depends_on = [alicloud_route_table.tr_landing_rt]
-//  depends_on = [alicloud_route_table_attachment.tr_landing_attachment_1,time_sleep.wait_60_seconds]
-//  count          = 1
-//  vswitch_id     = alicloud_vswitch.landing_for_cen_c_2.id
-//  route_table_id = alicloud_route_table.tr_landing_rt[count.index].id
-//}
 

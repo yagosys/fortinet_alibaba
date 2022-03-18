@@ -9,12 +9,10 @@ variable "fadLicense" {
 }
 
 resource "alicloud_instance" "client-vm" {
- //depends_on = [alicloud_instance.PrimaryFortigate,alicloud_cs_managed_kubernetes.k8s_ack1,alicloud_cs_managed_kubernetes.k8s_ack2,time_sleep.wait_900_seconds,alicloud_route_entry.to_ack1,alicloud_route_entry.to_ack2]
   depends_on = [alicloud_cen_transit_router_vpc_attachment.atta_fortiadc]
   image_id        = "ubuntu_18_04_x64_20G_alibase_20200521.vhd"
   internet_max_bandwidth_out = var.client_vm_internet_max_bandwidth_out=="1" ? 10 : null
   security_groups = alicloud_security_group.SecGroup.*.id
-//  instance_type="${data.alicloud_instance_types.client_vm_types_ds.instance_types.0.id}"
   instance_type = var.client_vm_instance_type
  instance_name              = "client-ubuntu-${random_string.random_name_post.result}"
   vswitch_id                 = alicloud_vswitch.internal_a_0.id
@@ -39,7 +37,6 @@ resource "alicloud_instance" "client-vm" {
 }
 
   provisioner "file" {
-     // source = "./FADV040000225874.lic"
       source = "${var.fadLicense}"
       destination ="/root/FADLICENSE.lic"
     }
@@ -105,7 +102,7 @@ resource "alicloud_instance" "client-vm" {
 connection {
 //  host = "${alicloud_instance.PrimaryFortigate.public_ip}"
 //host = "${element(aws_instance.example.*.public_ip, count.index)}"
-  host= local.num_secondary_instances=="1" ? alicloud_eip.PublicInternetIp.ip_address : alicloud_instance.PrimaryFortigate.public_ip
+  host= var.eip=="1" ? "${element(alicloud_eip.PublicInternetIp.*.ip_address,0)}" : alicloud_instance.PrimaryFortigate.public_ip
   type = "ssh"
   port = "${var.client_vm_ssh_port}"
   user = "${var.client_vm_username}"

@@ -16,15 +16,6 @@ resource "time_sleep" "wait_360_seconds" {
   create_duration = "360s"
 }
 
-//resource "time_sleep" "wait_900_seconds" {
-//
-//  create_duration = "900s"
-//}
-
-//resource "time_sleep" "wait_600_seconds" {
-//
-//  create_duration = "600s"
-//}
 
 resource "time_sleep" "wait_120_seconds" {
   depends_on = [alicloud_vswitch.internal_a_0]
@@ -32,7 +23,7 @@ resource "time_sleep" "wait_120_seconds" {
   create_duration = "120s"
 }
 
-resource "time_sleep" "wait_60_seconds" {
+resource "time_sleep" "wait_60_seconds_after_create_custom_rt" {
   depends_on = [alicloud_route_table.custom_route_tables]
 
   create_duration = "60s"

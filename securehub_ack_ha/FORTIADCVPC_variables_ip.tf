@@ -47,8 +47,8 @@ variable "fortiadc_instance_ami" {
 
 variable "fortiadc_instance" {
   type    = string
-  default = "auto" 
-//  default="ecs.ic5.large"
+//  default = "auto" 
+  default= "ecs.hfc6.large"
  description = "FORTIGATE实例的实例类型，默认auto为按照CPU，MEMORY自动选择"
 }
 
@@ -60,7 +60,6 @@ data "alicloud_instance_types" "fortiadc_types_ds" {
   system_disk_category = "cloud_efficiency"
   eni_amount = var.instance_type_allowed_eni_amount
   availability_zone  = var.zone_id_1
- // instance_type_family = var.instance //ecs.c5 is default
 }
 
 variable instance_type_allowed_eni_amount {
@@ -84,7 +83,6 @@ variable fortiadcpublicip_bandwidth_out {
 
 data "alicloud_zones" "fortiadc_zone_default" {
  available_instance_type = data.alicloud_instance_types.fortiadc_types_ds.instance_types.0.id
-//  available_instance_type = var.instance
 
   available_resource_creation = "VSwitch"
 }
