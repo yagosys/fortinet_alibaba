@@ -1,24 +1,24 @@
 output "SecondaryFortigatePublicIP" {
-  value = "${alicloud_instance.SecondaryFortigate[*].public_ip}"
+  value = var.num_secondary_instances =="1" ? "${alicloud_instance.SecondaryFortigate[*].public_ip}" : null
 }
 
 output "SecondaryFortigateAvailability_zone" {
-  value = "${alicloud_instance.SecondaryFortigate[*].availability_zone}"
+  value = var.num_secondary_instances =="1" ? "${alicloud_instance.SecondaryFortigate[*].availability_zone}" : null
 }
 
 output "SecondaryFortigatePrivateIP" {
-  value = "${alicloud_instance.SecondaryFortigate[*].private_ip}"
+  value = var.num_secondary_instances =="1" ? "${alicloud_instance.SecondaryFortigate[*].private_ip}" : null
 }
 
 output "SecondaryFortigateport2IP" {
-  value = "${alicloud_network_interface.SecondaryFortiGateInterface1[*].private_ip}"
+  value = var.num_secondary_instances =="1" ? "${alicloud_network_interface.SecondaryFortiGateInterface1[*].private_ip}" : null
 }
 
 
 output "SecondaryFortigateID" {
-  value = "${alicloud_instance.SecondaryFortigate[*].id}"
+  value = var.num_secondary_instances =="1" ? "${alicloud_instance.SecondaryFortigate[*].id}" : null
 }
 
 output "SecondaryFortigateAdminGUI_PORT" {
-  value = local.adminsport
+  value = var.num_secondary_instances =="1" ? local.adminsport : null
 }

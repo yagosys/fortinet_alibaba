@@ -7,9 +7,9 @@ variable "fortigate_instance_ami" {
 //Get Instance types with min requirements in the region.
 //If left with no instance_type_family the return may include shared instances.
 data "alicloud_instance_types" "types_ds" {
-  cpu_core_count       = var.cpu_core_count
-  memory_size          = var.memory_size
-  eni_amount = var.eni_amount
+  cpu_core_count       = 8
+  memory_size          = 16
+  eni_amount = 4
 }
 
 variable "product" {
@@ -44,9 +44,9 @@ variable  "cpu_core_count" {
  default= "4"
 }
 variable "memory_size" {
- default = "8"
+ default = "16"
 }
 
 variable "eni_amount" {
- default = "3"
+ default = "4"
 }

@@ -9,7 +9,7 @@ variable "fadLicense" {
 }
 
 resource "alicloud_instance" "client-vm" {
-  depends_on=[alicloud_instance.PrimaryFortigate]
+  depends_on=[alicloud_instance.PrimaryFortigate,time_sleep.wait_60_seconds_after_create_internal_a_vswitch]
   count = var.create_client_vm=="1"? 1 : 0 
   image_id        = "ubuntu_18_04_x64_20G_alibase_20200521.vhd"
   internet_max_bandwidth_out = var.client_vm_internet_max_bandwidth_out=="1" ? 10 : null
@@ -34,7 +34,7 @@ connection {
   type = "ssh"
   port = "${var.client_vm_ssh_port}"
   user = "${var.client_vm_username}"
-  timeout = "180s"
+  timeout = "360s"
   password = "${var.client_vm_password}"
 }
 

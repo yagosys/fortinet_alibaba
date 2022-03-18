@@ -13,6 +13,11 @@ resource "random_string" "random_name_post" {
 
 
 
+resource "time_sleep" "wait_120_seconds_after_create_Primary_fortigate" {
+ depends_on = [alicloud_instance.PrimaryFortigate]
+ count = var.num_secondary_instances=="1"? 1:0
+ create_duration = "180s"
+}
 
 resource "time_sleep" "wait_60_seconds_after_create_custom_rt" {
   depends_on = [alicloud_route_table.custom_route_tables]

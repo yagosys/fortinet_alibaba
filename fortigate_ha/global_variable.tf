@@ -3,16 +3,6 @@ variable "account_region" {
  default = "china"
 }
 
-variable "zone_id_1" {
- type =string
- default = "cn-hongkong-b"
-}
-
-variable "zone_id_2" {
-  type = string
-  default = "cn-hongkong-c"
-}
-
 variable "region" {
   type = string
   default ="cn-hongkong"

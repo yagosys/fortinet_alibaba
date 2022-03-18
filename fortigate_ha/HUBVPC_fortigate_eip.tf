@@ -36,9 +36,16 @@ resource "alicloud_eip_association" "eip_asso_fgb_mgmt" {
 
 
 output "PrimaryFortigate_MGMT_EIP" {
-  value = alicloud_eip.FgaMgmtEip[*].ip_address
+  value = var.mgmt_eip == "1" ? alicloud_eip.FgaMgmtEip[*].ip_address : null
 }
 
 output "SecondaryFortigate_MGMT_EIP" {
-  value = alicloud_eip.FgbMgmtEip[*].ip_address
+  value = var.mgmt_eip == "1" ? alicloud_eip.FgbMgmtEip[*].ip_address : null
+}
+
+resource "alicloud_eip" "PublicInternetIp" {
+  count = var.eip=="1" ? 1 : 0
+  name                 = "EIP3"
+  bandwidth            = "5"
+  internet_charge_type = "PayByTraffic"
 }
