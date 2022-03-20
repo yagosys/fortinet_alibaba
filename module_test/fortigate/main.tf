@@ -1,3 +1,6 @@
+variable "custom_rt" {
+default=1
+}
 variable fortigate {
 type =map(any)
     default = {
@@ -13,20 +16,24 @@ type =map(any)
 		    "100",
 		    "100",
 		]
+            ha_priority=[
+		     "200",
+		     "100",
+	        ]
             defaultgwy = [
 		    "10.0.11.253",
-		    "10.0.11.253",
+		    "10.0.21.253",
                 ]
             port2gateway = [
 		     "10.0.12.253",
-		     "10.0.12.253",
+		     "10.0.22.253",
 		]
 	    mgmt_gateway_ip =[
 		    "10.0.14.253",
-		    "10.0.14.253",
+		    "10.0.24.253",
 		]
 	    ha_peer_ip = [
-		    "10.0.13.12",
+		    "10.0.23.12",
 	            "10.0.13.11"
                 ]
   }
@@ -38,15 +45,19 @@ type = map(any)
 	default = {
 		external = [
 			"10.0.11.0/24",
+			"10.0.21.0/24",
 		]
 		internal = [
 			"10.0.12.0/24",
+			"10.0.22.0/24",
 		]
 		ha = [
 			"10.0.13.0/24",
+		 	"10.0.23.0/24",
 		]
 		mgmt = [
 			"10.0.14.0/24",
+			"10.0.24.0/24",
 		]
 		internal_cidr = [
 			"10.0.0.0/16"
@@ -58,19 +69,19 @@ type = map(any)
        default = {
 	     external = [
 		   "10.0.11.11",
-		   "10.0.11.12",
+		   "10.0.21.12",
 		]
               internal = [
 		   "10.0.12.11",
-		   "10.0.12.12",
+		   "10.0.22.12",
 		]
 	      ha = [
 		   "10.0.13.11",
-		   "10.0.13.12",
+		   "10.0.23.12",
 		]
 	      mgmt = [
 		    "10.0.14.11",
-		    "10.0.14.12",
+		    "10.0.24.12",
 		]
 	}
 }
@@ -90,75 +101,81 @@ available_instance_type =var.instance_type
 }
 
 resource "alicloud_vswitch" "internal_a" {
- count=var.number_of_zone
+ name="internal_a"
+ count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_zone
  vpc_id =module.vswitch.vpc-id
  cidr_block=var.cidr_block["internal"][count.index]
- zone_id=data.alicloud_zones.default.zones.0.id
+ zone_id=element(data.alicloud_zones.default.zones.*.id,count.index)
 }
 
 resource "alicloud_vswitch" "external_a" {
- count=var.number_of_zone
+ name="external_a"
+ count= var.number_of_zone==0 ? 1: var.number_of_zone
  vpc_id =module.vswitch.vpc-id
  cidr_block=var.cidr_block["external"][count.index]
- zone_id=data.alicloud_zones.default.zones.0.id
+ zone_id=element(data.alicloud_zones.default.zones.*.id,count.index)
 }
 
 resource "alicloud_vswitch" "ha_a" {
+ name="ha_a"
  count=var.number_of_zone
  vpc_id =module.vswitch.vpc-id
  cidr_block=var.cidr_block["ha"][count.index]
- zone_id=data.alicloud_zones.default.zones.0.id
+ zone_id=element(data.alicloud_zones.default.zones.*.id,count.index)
 }
 
 resource "alicloud_vswitch" "mgmt_a" {
+ name="mgmt_a"
  count=var.number_of_zone
  vpc_id =module.vswitch.vpc-id
  cidr_block=var.cidr_block["mgmt"][count.index]
- zone_id=data.alicloud_zones.default.zones.0.id
+ zone_id=element(data.alicloud_zones.default.zones.*.id,count.index)
 }
 
 resource "alicloud_network_interface" "PrimaryFortiGateInterface1" {
-  count=var.number_of_fortigate
+ count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   network_interface_name = "createdByTerraform"
-  vswitch_id      = alicloud_vswitch.internal_a[0].id
+
+  vswitch_id      = var.number_of_zone==1 ? alicloud_vswitch.internal_a[0].id : alicloud_vswitch.internal_a[count.index].id
   security_groups = module.vswitch.sg-id
+
   private_ip=var.cidr_block_ip["internal"][count.index]
 }
 
 resource "alicloud_network_interface" "PrimaryFortiGateInterface2" {
   depends_on=[alicloud_network_interface.PrimaryFortiGateInterface1]
-  count=var.number_of_fortigate
+ count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   network_interface_name = "createdByTerraform"
-  vswitch_id      = alicloud_vswitch.ha_a[0].id
+  vswitch_id      = var.number_of_zone==1 ? alicloud_vswitch.ha_a[0].id : alicloud_vswitch.ha_a[count.index].id
   security_groups = module.vswitch.sg-id
   private_ip=var.cidr_block_ip["ha"][count.index]
 }
 
 resource "alicloud_network_interface" "PrimaryFortiGateInterface3" {
   depends_on=[alicloud_network_interface.PrimaryFortiGateInterface2]
-  count=var.number_of_fortigate
+ count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   network_interface_name = "createdByTerraform"
-  vswitch_id      = alicloud_vswitch.mgmt_a[0].id
+  vswitch_id      = var.number_of_zone==1 ? alicloud_vswitch.mgmt_a[0].id : alicloud_vswitch.mgmt_a[count.index].id
   security_groups = module.vswitch.sg-id
   private_ip=var.cidr_block_ip["mgmt"][count.index]
 }
 
 resource "alicloud_network_interface_attachment" "PrimaryFortigateattachment1" {
- count = var.number_of_fortigate
+ count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
 depends_on           = [alicloud_network_interface.PrimaryFortiGateInterface1]
   instance_id          = alicloud_instance.PrimaryFortigate[count.index].id
   network_interface_id = alicloud_network_interface.PrimaryFortiGateInterface1[count.index].id
 }
 
 resource "alicloud_network_interface_attachment" "PrimaryFortigateattachment2" {
-  count = var.number_of_fortigate
+ count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   depends_on           = [alicloud_network_interface_attachment.PrimaryFortigateattachment1]
   instance_id          = alicloud_instance.PrimaryFortigate[count.index].id
   network_interface_id = alicloud_network_interface.PrimaryFortiGateInterface2[count.index].id
 }
 
 resource "alicloud_network_interface_attachment" "PrimaryFortigateattachment3" {
-  count= var.number_of_fortigate
+ count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   depends_on           = [alicloud_network_interface_attachment.PrimaryFortigateattachment2]
   instance_id          = alicloud_instance.PrimaryFortigate[count.index].id
   network_interface_id = alicloud_network_interface.PrimaryFortiGateInterface3[count.index].id
@@ -168,10 +185,10 @@ resource "alicloud_network_interface_attachment" "PrimaryFortigateattachment3" {
 resource "alicloud_instance" "PrimaryFortigate" {
  count= var.number_of_fortigate
  instance_name="fortigate${count.index}-${module.random_string.random-string}"
- availability_zone =data.alicloud_zones.default.zones.0.id
+ availability_zone =element(data.alicloud_zones.default.zones.*.id,count.index)
  security_groups   = module.vswitch.sg-id
  instance_type = var.instance_type
- vswitch_id           = alicloud_vswitch.external_a[0].id
+ vswitch_id           = var.number_of_zone==1 ? alicloud_vswitch.external_a[0].id : alicloud_vswitch.external_a[count.index].id
  role_name =module.ram_role.ram_role-id
  private_ip=var.cidr_block_ip["external"][count.index]
  internet_max_bandwidth_out=var.fortigate["internet_max_bandwidth_out"][count.index]
@@ -190,7 +207,7 @@ port4_ip=var.cidr_block_ip["mgmt"][count.index]
 port4_mask=cidrnetmask(var.cidr_block["mgmt"][length(var.cidr_block["mgmt"])-1])
 internal_cidr_mask = cidrnetmask(var.cidr_block["internal_cidr"][length(var.cidr_block["internal_cidr"])-1])
 internal_cidr=cidrhost(var.cidr_block["internal_cidr"][length(var.cidr_block["internal_cidr"],)-1],0)
-
+ha_priority=var.fortigate["ha_priority"][count.index]
 mgmt_gateway_ip=var.fortigate["mgmt_gateway_ip"][count.index]
 ha_peer_ip=var.fortigate["ha_peer_ip"][count.index]
 type="byol",
