@@ -9,7 +9,8 @@ resource "alicloud_route_table" "custom_route_tables" {
 // during destroy time
 
 resource "alicloud_route_table_attachment" "custom_route_table_attachment_internal_0" {
-  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_zone
+// depends_on =[time_sleep.wait_60_seconds_after_create_internal_a_vswitch]
+  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : 1
   vswitch_id     =  alicloud_vswitch.internal_a[0].id
   route_table_id =  alicloud_route_table.custom_route_tables[0].id
 }
