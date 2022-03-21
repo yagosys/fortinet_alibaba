@@ -1,105 +1,3 @@
-variable "custom_rt" {
-default=1
-}
-variable fortigate {
-type =map(any)
-    default = {
-            hostname=[
-		    "fortigate-active",
-		    "fortigate-passive",
-		]
-            license_file=[
-		    "./FGVMULTM22000730.lic",
-		    "./FGVMULTM22000750.lic",
-		]
-	    internet_max_bandwidth_out=[
-		    "100",
-		    "100",
-		]
-            ha_priority=[
-		     "200",
-		     "100",
-	        ]
-            defaultgwy = [
-		    "10.0.11.253",
-		    "10.0.21.253",
-                ]
-            port2gateway = [
-		     "10.0.12.253",
-		     "10.0.22.253",
-		]
-	    mgmt_gateway_ip =[
-		    "10.0.14.253",
-		    "10.0.24.253",
-		]
-	    ha_peer_ip = [
-		    "10.0.23.12",
-	            "10.0.13.11"
-                ]
-  }
-}
-
-
-variable cidr_block {
-type = map(any)
-	default = {
-		external = [
-			"10.0.11.0/24",
-			"10.0.21.0/24",
-		]
-		internal = [
-			"10.0.12.0/24",
-			"10.0.22.0/24",
-		]
-		ha = [
-			"10.0.13.0/24",
-		 	"10.0.23.0/24",
-		]
-		mgmt = [
-			"10.0.14.0/24",
-			"10.0.24.0/24",
-		]
-		internal_cidr = [
-			"10.0.0.0/16"
-		]
-	}
-}
-variable cidr_block_ip {
-type = map(any)
-       default = {
-	     external = [
-		   "10.0.11.11",
-		   "10.0.21.12",
-		]
-              internal = [
-		   "10.0.12.11",
-		   "10.0.22.12",
-		]
-	      ha = [
-		   "10.0.13.11",
-		   "10.0.23.12",
-		]
-	      mgmt = [
-		    "10.0.14.11",
-		    "10.0.24.12",
-		]
-	}
-}
-
-variable "instance_type" {
-default= "ecs.hfc6.2xlarge"
-}
-variable "number_of_fortigate" {
-default= 2
-}
-variable "number_of_zone" {
-default = 1
-}
-
-data "alicloud_zones" "default" {
-available_instance_type =var.instance_type
-}
-
 resource "alicloud_vswitch" "internal_a" {
  name="internal_a"
  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_zone
@@ -133,6 +31,9 @@ resource "alicloud_vswitch" "mgmt_a" {
 }
 
 resource "alicloud_network_interface" "PrimaryFortiGateInterface1" {
+//depends_on = [alicloud_route_table_attachment.custom_route_table_attachment_internal_0]
+depends_on = [time_sleep.wait_30_seconds_after_create_internal_a_vswitch]
+//wait for vswitch to cool down
  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   network_interface_name = "createdByTerraform"
 
@@ -185,9 +86,11 @@ resource "alicloud_network_interface_attachment" "PrimaryFortigateattachment3" {
 resource "alicloud_instance" "PrimaryFortigate" {
  count= var.number_of_fortigate
  instance_name="fortigate${count.index}-${module.random_string.random-string}"
- availability_zone =element(data.alicloud_zones.default.zones.*.id,count.index)
+ availability_zone =var.number_of_zone==2 ? element(data.alicloud_zones.default.zones.*.id,count.index) : data.alicloud_zones.default.zones[0].id
  security_groups   = module.vswitch.sg-id
- instance_type = var.instance_type
+// instance_type = var.instance_type
+ instance_type = var.instance_type != "auto" ? var.instance_type : coalesce(length(data.alicloud_zones.default_hfc6.zones) >1  ? data.alicloud_zones.default_hfc6.available_instance_type : "", length(data.alicloud_zones.default_c5.zones) >1  ? data.alicloud_zones.default_c5.available_instance_type : "", length(data.alicloud_zones.default_hfc5.zones) > 1 ?data.alicloud_zones.default_hfc5.available_instance_type : "", length(data.alicloud_zones.default_sn1ne.zones) >1 ?data.alicloud_zones.default_sn1ne.available_instance_type : "")
+
  vswitch_id           = var.number_of_zone==1 ? alicloud_vswitch.external_a[0].id : alicloud_vswitch.external_a[count.index].id
  role_name =module.ram_role.ram_role-id
  private_ip=var.cidr_block_ip["external"][count.index]
@@ -215,9 +118,7 @@ license_file=file(var.fortigate["license_file"][count.index]),
 hostname    =     var.fortigate["hostname"][count.index]
 }
 )
-
-image_id="m-j6cj2liju58d88zmgbdg"
-
+image_id = var.image_id=="auto" ?  data.alicloud_images.ecs_image[0].images.0.id : var.image_id
 }
 
 module "ram_role" {
