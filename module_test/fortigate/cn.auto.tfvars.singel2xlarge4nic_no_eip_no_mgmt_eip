@@ -1,7 +1,7 @@
 instance_type="auto"
 image_id="m-j6cj2liju58d88zmgbdg"
 number_of_fortigate=1
-number_of_zone=0
+number_of_zone=1
 custom_rt=0
 mgmt_eip=0
 eip=0
@@ -15,7 +15,7 @@ fortigate= {
                     "./FGVMULTM22000750.lic",
                 ]
             internet_max_bandwidth_out=[
-                    "100",
+                    "0",
                     "0",
                 ]
             ha_priority=[

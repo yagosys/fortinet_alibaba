@@ -31,7 +31,8 @@ resource "alicloud_vswitch" "mgmt_a" {
 }
 
 resource "alicloud_network_interface" "PrimaryFortiGateInterface1" {
-depends_on = [alicloud_route_table_attachment.custom_route_table_attachment_internal]
+//depends_on = [alicloud_route_table_attachment.custom_route_table_attachment_internal_0]
+depends_on = [time_sleep.wait_30_seconds_after_create_internal_a_vswitch]
 //wait for vswitch to cool down
  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   network_interface_name = "createdByTerraform"
@@ -81,37 +82,15 @@ resource "alicloud_network_interface_attachment" "PrimaryFortigateattachment3" {
   network_interface_id = alicloud_network_interface.PrimaryFortiGateInterface3[count.index].id
 }
 
-resource "alicloud_route_table" "custom_route_tables" {
-  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_zone
-  vpc_id      = module.vswitch.vpc-id
-  route_table_name        = "rt-${count.index}"
-  description = "hubvpc internal route tables, nexthop to fortigate port 2-eni created with terraform."
-}
-
-resource "alicloud_route_table_attachment" "custom_route_table_attachment_internal" {
-  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_zone
-//PrimaryFortiGateInterface1 is bound to internal_a vswitch, it can't happen at same time when attach routing table to same vswitch . 
-//  depends_on = [alicloud_network_interface.PrimaryFortiGateInterface1]
-  vswitch_id     = alicloud_vswitch.internal_a[count.index].id
-  route_table_id = alicloud_route_table.custom_route_tables[count.index].id
-}
-
-resource "alicloud_route_entry" "internal_rt_default_route_to_eni" {
-  depends_on            = [alicloud_network_interface.PrimaryFortiGateInterface1]
-  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_zone
-  route_table_id        = alicloud_route_table.custom_route_tables[count.index].id
-  destination_cidrblock = var.default_egress_route
-  nexthop_type          = "NetworkInterface"
-  name                  = alicloud_network_interface.PrimaryFortiGateInterface1[count.index].id
-  nexthop_id            = alicloud_network_interface.PrimaryFortiGateInterface1[count.index].id
-}
 
 resource "alicloud_instance" "PrimaryFortigate" {
  count= var.number_of_fortigate
  instance_name="fortigate${count.index}-${module.random_string.random-string}"
- availability_zone =element(data.alicloud_zones.default.zones.*.id,count.index)
+ availability_zone =var.number_of_zone==2 ? element(data.alicloud_zones.default.zones.*.id,count.index) : data.alicloud_zones.default.zones[0].id
  security_groups   = module.vswitch.sg-id
- instance_type = var.instance_type
+// instance_type = var.instance_type
+ instance_type = var.instance_type != "auto" ? var.instance_type : coalesce(length(data.alicloud_zones.default_hfc6.zones) >1  ? data.alicloud_zones.default_hfc6.available_instance_type : "", length(data.alicloud_zones.default_c5.zones) >1  ? data.alicloud_zones.default_c5.available_instance_type : "", length(data.alicloud_zones.default_hfc5.zones) > 1 ?data.alicloud_zones.default_hfc5.available_instance_type : "", length(data.alicloud_zones.default_sn1ne.zones) >1 ?data.alicloud_zones.default_sn1ne.available_instance_type : "")
+
  vswitch_id           = var.number_of_zone==1 ? alicloud_vswitch.external_a[0].id : alicloud_vswitch.external_a[count.index].id
  role_name =module.ram_role.ram_role-id
  private_ip=var.cidr_block_ip["external"][count.index]
@@ -139,9 +118,7 @@ license_file=file(var.fortigate["license_file"][count.index]),
 hostname    =     var.fortigate["hostname"][count.index]
 }
 )
-
-image_id="m-j6cj2liju58d88zmgbdg"
-
+image_id = var.image_id=="auto" ?  data.alicloud_images.ecs_image[0].images.0.id : var.image_id
 }
 
 module "ram_role" {
