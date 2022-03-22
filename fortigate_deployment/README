@@ -1,2 +1,29 @@
+deploy cross zone HA 
+
+
 cd fortigate
+
+cp cn.auto.tfvars.crosszoneha cn.auto.tfvars
 terraform apply
+
+
+deploy same zone HA
+
+cd fortigate
+cp cn.auto.tfvars.onezoneha cn.auto.tfvars
+terraform apply
+
+
+deploy single fortigate with 4NIC
+
+cd fortigate
+cp cn.auto.tfvars.single_fortigate_4_nic_public_ip cn.auto.tfvars
+terraform apply
+
+
+deploy single fortigate with 1nic 
+
+cp cn.auto.tfvars.singlefortigate1nic cn.auto.tfvars
+
+terraform apply
+
