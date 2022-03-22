@@ -5,8 +5,8 @@ resource "alicloud_route_table" "custom_route_tables" {
   description = "hubvpc internal route tables, nexthop to fortigate port 2-eni created with terraform."
 }
 // do not use count.index to associate routing table to vswitch , as it will happen at same-time which will fail
-
-// during destroy time
+// during destroy time, so associate routing table to vswitch seperately use two resource block. 
+// each block count max = 1 regardless the number_of_zone =2 
 
 resource "alicloud_route_table_attachment" "custom_route_table_attachment_internal_0" {
 // depends_on =[time_sleep.wait_60_seconds_after_create_internal_a_vswitch]

@@ -24,70 +24,18 @@ type =map(any)
 		     "200",
 		     "100",
 	        ]
-            defaultgwy = [
-		    "10.0.11.253",
-		    "10.0.21.253",
-                ]
-            port2gateway = [
-		     "10.0.12.253",
-		     "10.0.22.253",
-		]
-	    mgmt_gateway_ip =[
-		    "10.0.14.253",
-		    "10.0.24.253",
-		]
-	    ha_peer_ip = [
-		    "10.0.23.12",
-	            "10.0.13.11"
-                ]
   }
-}
-
-
-variable cidr_block {
-type = map(any)
-	default = {
-		external = [
-			"10.0.11.0/24",
-			"10.0.21.0/24",
-		]
-		internal = [
-			"10.0.12.0/24",
-			"10.0.22.0/24",
-		]
-		ha = [
-			"10.0.13.0/24",
-		 	"10.0.23.0/24",
-		]
-		mgmt = [
-			"10.0.14.0/24",
-			"10.0.24.0/24",
-		]
-		internal_cidr = [
-			"10.0.0.0/16"
-		]
+    validation {
+	condition     = can(var.fortigate["license_file"])
+    error_message = "A license file is required."
 	}
 }
-variable cidr_block_ip {
-type = map(any)
-       default = {
-	     external = [
-		   "10.0.11.11",
-		   "10.0.21.12",
-		]
-              internal = [
-		   "10.0.12.11",
-		   "10.0.22.12",
-		]
-	      ha = [
-		   "10.0.13.11",
-		   "10.0.23.12",
-		]
-	      mgmt = [
-		    "10.0.14.11",
-		    "10.0.24.12",
-		]
-	}
+variable subnet_cidr {
+ default= ""
+ validation {
+    condition     =  can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/(\\d+))$", var.subnet_cidr))
+    error_message = "Must be in format like 10.0.0.0/16."
+  }
 }
 
 variable "default_egress_route" {
@@ -96,11 +44,19 @@ variable "default_egress_route" {
 }
 
 variable "instance_type" {
-default= "ecs.hfc6.2xlarge"
+default= ""
+validation {
+  condition = substr(var.instance_type,0,3) == "ecs" || contains(["auto"],var.instance_type)
+  error_message= "A instance_type is required, can be auto or start with prefix ecs."
+}
 }
 
 variable "number_of_fortigate" {
 default= 2
+validation {
+  condition = contains([2,1], var.number_of_fortigate)
+  error_message = "Must be 1 or 2."
+}
 }
 
 variable "number_of_zone" {
@@ -123,48 +79,32 @@ validation {
 variable "eip" {
 default= 1
 validation {
-   condition = contains ([1,0], var.eip)
-   error_message = "Must be 0, 1  0 means do not create eip for port1 , 1 means create eip for active port1."
+   condition = contains ([1,0], var.eip) 
+   error_message = "Must be 0, 1  0 means do not create eip for port1 , 1 means create use eip for active port1 when public internet ip is not set."
 }
 }
 
-data "alicloud_zones" "default" {
-#available_instance_type =var.instance_type
-available_instance_type = var.instance_type != "auto" ? var.instance_type : coalesce(length(data.alicloud_zones.default_hfc6.zones) >1  ? data.alicloud_zones.default_hfc6.available_instance_type : "", length(data.alicloud_zones.default_c5.zones) >1  ? data.alicloud_zones.default_c5.available_instance_type : "", length(data.alicloud_zones.default_hfc5.zones) > 1 ?data.alicloud_zones.default_hfc5.available_instance_type : "", length(data.alicloud_zones.default_sn1ne.zones) >1 ?data.alicloud_zones.default_sn1ne.available_instance_type : "")
+variable "image_id" {
+ default=""
+ validation {
+ 	condition = substr(var.image_id,0,2) == "m-" || contains(["auto"],var.image_id)
+	error_message= "Must be auto or image with prefix m-."
+ }
 }
 
-data "alicloud_zones" "default_sn1ne" {
- available_instance_type = var.instance_type !="auto" ? var.instance_type : element(concat([for instance  in data.alicloud_instance_types.types_ds.instance_types.*.id : instance if (contains(["ecs.sn1ne.2xlarge"], instance))],["ecs.hfc6.placehold"]),0)
- available_resource_creation = "VSwitch"
-}
-data "alicloud_zones" "default_hfc6" {
- available_instance_type = var.instance_type !="auto" ? var.instance_type : element(concat([for instance  in data.alicloud_instance_types.types_ds.instance_types.*.id : instance if (contains(["ecs.hfc6.2xlarge"], instance))],["ecs.hfc6.placehold"]),0)
- available_resource_creation = "VSwitch"
-}
-data "alicloud_zones" "default_c5" {
- available_instance_type = var.instance_type !="auto" ? var.instance_type : element(concat([for instance  in data.alicloud_instance_types.types_ds.instance_types.*.id : instance if (contains(["ecs.c5.2xlarge"], instance))],["ecs.hfc6.placehold"]),0)
- available_resource_creation = "VSwitch"
-}
-data "alicloud_zones" "default_hfc5" {
- available_instance_type = var.instance_type !="auto" ? var.instance_type : element(concat([for instance  in data.alicloud_instance_types.types_ds.instance_types.*.id : instance if (contains(["ecs.hfc5.2xlarge"], instance))],["ecs.hfc6.placehold"]),0)
- available_resource_creation = "VSwitch"
-}
-data "alicloud_instance_types" "types_ds" {
-  cpu_core_count       = 8
-  memory_size          = 16
-  eni_amount = 4
-}
-variable image_id {
- default="auto"
-}
 variable "most_recent_image_search_string_from_marketplace" {
    type = string
-   default = "FortiGate-6.4.5.+BYOL"
+   default = ""
 }
 
-data "alicloud_images" "ecs_image" {
-  count = var.image_id=="auto"? 1:0
-  owners = "marketplace"
-  most_recent = true
-  name_regex = var.most_recent_image_search_string_from_marketplace
+variable "cpu_core_count"  {
+ default=""
+}
+
+variable "memory_size" {
+ default = ""
+}
+
+variable "eni_amount" {
+ default = ""
 }

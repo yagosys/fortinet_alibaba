@@ -14,3 +14,10 @@ resource "time_sleep" "wait_30_seconds_after_create_internal_a_vswitch" {
  depends_on = [alicloud_vswitch.internal_a]
    create_duration =  "30s"
 }
+
+resource "time_sleep" "wait_180_seconds_after_create_Primary_fortigate" {
+//this is for give fortigate to apply license and form HA before associate EIP
+ depends_on = [alicloud_instance.PrimaryFortigate]
+ count = var.number_of_fortigate==2? 1:0
+ create_duration = "180s"
+}
