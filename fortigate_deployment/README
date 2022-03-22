@@ -1,0 +1,2 @@
+cd fortigate
+terraform apply
