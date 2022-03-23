@@ -38,6 +38,9 @@ ha_priority=var.fortigate["ha_priority"][count.index],
 mgmt_gateway_ip=local.fortigate["mgmt_gateway_ip"][count.index],
 ha_peer_ip=local.fortigate["ha_peer_ip"][count.index],
 
+ spoke_vpc1_cidr=cidrhost(var.ack1_node_pod_subnet,0)
+ spoke_vpc1_cidr_mask = cidrnetmask(var.ack1_node_pod_subnet)
+
 type="byol",
 license_file=file(var.fortigate["license_file"][count.index]),
 hostname    =     var.fortigate["hostname"][count.index],

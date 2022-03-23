@@ -33,7 +33,8 @@ type =map(any)
 variable subnet_cidr {
  default= ""
  validation {
-    condition     =  can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/(\\d+))$", var.subnet_cidr))
+  //  condition     =  can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/(\\d+))$", var.subnet_cidr))
+condition     =  can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/([0-9]{1,2}))$", var.subnet_cidr))
     error_message = "Must be in format like 10.0.0.0/16."
   }
 }
@@ -107,4 +108,12 @@ variable "memory_size" {
 
 variable "eni_amount" {
  default = ""
+}
+
+variable "securehub" {
+ default = "1"
+}
+
+variable "spoke_linux_vpc_1" {
+ default = 0
 }

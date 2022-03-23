@@ -1,8 +1,21 @@
+subnet_cidr="192.168.0.0/16"
+hubvpc_vswitch_a_cidr_13="192.168.13.0/24"
+hubvpc_vswitch_b_cidr_23="192.168.23.0/24"
+
+ack1_node_pod_subnet="10.1.0.0/16"
+ack1_vswitch0_subnet="10.1.0.0/24"
+ack1_vswitch1_subnet="10.1.1.0/24"
+
+vpc1_subnet_cidr1= "10.0.0.0/8"
+vpc2_subnet_cidr2="10.0.0.0/8"
+
+ack2_vswitch0_cidr_block="10.0.0.0/24"
+ack2_vswitch1_cidr_block="10.0.1.0/24"
 instance_type="auto"
-subnet_cidr="10.0.0.0/16"
 image_id="m-j6cj2liju58d88zmgbdg"
 most_recent_image_search_string_from_marketplace="FortiGate-6.4.5.+BYOL"
 number_of_fortigate=1
+securehub="0"
 number_of_zone=1
 custom_rt=1
 mgmt_eip=0
