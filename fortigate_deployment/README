@@ -7,29 +7,36 @@ cp cn.auto.tfvars.crosszoneha cn.auto.tfvars
 terraform apply
 
 
-deploy same zone HA
+#deploy same zone HA
 
 cd fortigate
 cp cn.auto.tfvars.onezoneha cn.auto.tfvars
 terraform apply
 
 
-deploy single fortigate with 4NIC
+#deploy single fortigate with 4NIC
 
 cd fortigate
 cp cn.auto.tfvars.single_fortigate_4_nic_public_ip cn.auto.tfvars
 terraform apply
 
 
-deploy single fortigate with 1nic 
+#deploy single fortigate with 1nic 
 
 cp cn.auto.tfvars.singlefortigate1nic cn.auto.tfvars
 
 terraform apply
 
-deploy crosszone HA fortigate together with one spoke vpc with one linux ubuntu inside the spoke vpc
+#deploy crosszone HA fortigate together with one spoke vpc with one linux ubuntu inside the spoke vpc
 
 cp cn.auto.tfvars.securehub_with_one_spoke_vpc_and_fortigate_ha cn.auto.tfvars
+
+terraform apply
+
+#deploy crosszone HA fortigate together with two spoke vpc with one linux in each spoke vpc.
+the traffic between spoke vpc is inspected by fortigate in hub vpc
+
+cp cn.auto.tfvars.securehub_with_two_spoke_vpc_and_fortigate_ha cn.auto.tfvars
 
 terraform apply
 
