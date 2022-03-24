@@ -1,6 +1,6 @@
 resource "alicloud_network_interface" "PrimaryFortiGateInterface1" {
-depends_on = [time_sleep.wait_30_seconds_after_create_internal_a_vswitch]
-//wait for vswitch to cool down
+depends_on = [time_sleep.wait_45_seconds_after_create_internal_a_vswitch]
+//wait for vswitch to cool down, see issues when wait 30 seconds, so changed to 45seonds
  count= var.number_of_zone==0 ? (var.custom_rt==0 ? 0 : 1) : var.number_of_fortigate
   network_interface_name = "createdByTerraform"
 

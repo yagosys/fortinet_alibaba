@@ -3,15 +3,15 @@ subnet_cidr="192.168.0.0/16"
 hubvpc_vswitch_a_cidr_13="192.168.13.0/24"
 hubvpc_vswitch_b_cidr_23="192.168.23.0/24"
 
-ack1_node_pod_subnet="10.1.0.0/16"
-ack1_vswitch0_subnet="10.1.0.0/24"
-ack1_vswitch1_subnet="10.1.1.0/24"
+vpc1_subnets="10.1.0.0/16"
+vpc1_vswitch0_subnet="10.1.0.0/24"
+vpc1_vswitch1_subnet="10.1.1.0/24"
 
 vpc1_subnet_cidr1= "10.0.0.0/8"
 vpc2_subnet_cidr2="10.0.0.0/8"
 
-ack2_vswitch0_cidr_block="10.0.0.0/24"
-ack2_vswitch1_cidr_block="10.0.1.0/24" 
+vpc2_vswitch0_subnet="10.0.0.0/24"
+vpc2_vswitch1_subnet="10.0.1.0/24" 
 
 image_id="m-j6cj2liju58d88zmgbdg"
 most_recent_image_search_string_from_marketplace="FortiGate-6.4.5.+BYOL"
@@ -22,6 +22,7 @@ mgmt_eip=1
 eip=1
 securehub="1"
 spoke_linux_vpc_1=1
+spoke_linux_vpc_2=0
 cpu_core_count=8
 memory_size=16
 eni_amount=4

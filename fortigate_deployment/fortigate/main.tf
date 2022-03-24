@@ -38,8 +38,11 @@ ha_priority=var.fortigate["ha_priority"][count.index],
 mgmt_gateway_ip=local.fortigate["mgmt_gateway_ip"][count.index],
 ha_peer_ip=local.fortigate["ha_peer_ip"][count.index],
 
- spoke_vpc1_cidr=cidrhost(var.ack1_node_pod_subnet,0)
- spoke_vpc1_cidr_mask = cidrnetmask(var.ack1_node_pod_subnet)
+ spoke_vpc1_cidr=cidrhost(var.vpc1_subnets,0)
+ spoke_vpc1_cidr_mask = cidrnetmask(var.vpc1_subnets)
+
+ spoke_vpc2_cidr=cidrhost(var.vpc2_subnets,0)
+ spoke_vpc2_cidr_mask = cidrnetmask(var.vpc2_subnets)
 
 type="byol",
 license_file=file(var.fortigate["license_file"][count.index]),

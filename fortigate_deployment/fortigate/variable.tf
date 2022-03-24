@@ -117,3 +117,6 @@ variable "securehub" {
 variable "spoke_linux_vpc_1" {
  default = 0
 }
+variable "spoke_linux_vpc_2" {
+ default = 0
+}
