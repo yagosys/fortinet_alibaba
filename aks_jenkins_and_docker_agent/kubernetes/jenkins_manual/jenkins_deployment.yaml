@@ -1,0 +1,48 @@
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: jenkins-master
+  namespace: jenkins
+  labels:
+    app: jenkins-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-master
+  template:
+    metadata:
+      labels:
+        app: jenkins-master
+    spec:
+      serviceAccountName: jenkins-account
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      containers:
+      - name: jenkins
+        image: jenkins/jenkins:lts
+        env: 
+        - name: DOCKER_HOST
+          value: "tcp://10.1.1.172:2375"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        - containerPort: 50000
+        readinessProbe:
+          httpGet:
+            path: /login
+            port: 8080
+          initialDelaySeconds: 300
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 2
+          failureThreshold: 5
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: jenkins-home
+      volumes:
+      - name: jenkins-home
+        emptyDir: {}

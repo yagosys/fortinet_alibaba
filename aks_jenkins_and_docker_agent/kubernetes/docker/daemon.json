@@ -1,0 +1,1 @@
+{"hosts": ["tcp://10.1.1.172:2375", "unix:///var/run/docker.sock"]}

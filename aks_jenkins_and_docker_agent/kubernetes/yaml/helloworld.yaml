@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: helloworld2
+spec:
+  containers:
+  - name: helloworld2
+    image: interbeing/k8scici:hello-world
