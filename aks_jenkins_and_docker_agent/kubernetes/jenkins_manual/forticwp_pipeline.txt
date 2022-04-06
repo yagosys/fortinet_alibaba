@@ -1,0 +1,40 @@
+pipeline{
+        environment {
+          DOCKERHUB_CREDENTIALS = credentials('DockerHubPwd')
+        }
+      agent{
+        node{
+	   label 'ubuntu'
+        }
+      }
+      stages{
+        stage('git clone'){
+          steps{
+                sh "rm -rf jenkins-demo"
+                sh "git clone https://github.com/yagosys/jenkins-demo"
+	  }
+        }
+        stage('Package'){
+          steps{
+                sh "docker build ./jenkins-demo -t golang-1.8-alpine:latest"
+	  }
+        }
+        stage('Image Scan') {
+           steps {
+                fortiCWPScanner block: true, imageName: "golang-1.8-alpine:latest"
+	   }
+        }
+        stage("Docker login"){
+           steps{
+            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'   
+           }
+        }
+        stage("Docker push") {
+	    steps {
+	         sh "docker tag golang-1.8-alpine interbeing/golang-1.8-alpine:latest"
+	         sh "docker push interbeing/golang-1.8-alpine:latest"
+	    }
+        }
+      }     
+}
+
