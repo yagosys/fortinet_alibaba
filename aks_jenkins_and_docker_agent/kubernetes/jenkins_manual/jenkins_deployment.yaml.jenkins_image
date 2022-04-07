@@ -23,7 +23,7 @@ spec:
         runAsGroup: 0
       containers:
       - name: jenkins
-        image: interbeing/jenkinsdindforticwp:0.9.6
+        image: jenkins/jenkins:lts
         env: 
         - name: DOCKER_HOST
           value: "tcp://10.1.1.172:2375"

@@ -105,8 +105,8 @@ provisioner "remote-exec" {
        "cp /root/override.conf /etc/systemd/system/docker.service.d/",
        "systemctl daemon-reload",
        "systemctl restart docker.service",
- "kubectl exec po/$(kubectl get pod -n jenkins -o jsonpath='{.items[0].metadata.name}') -n jenkins -- apt update",
-       "kubectl exec po/$(kubectl get pod -n jenkins -o jsonpath='{.items[0].metadata.name}') -n jenkins -- apt install docker.io -y"    
+ "kubectl exec po/$(kubectl get pod -n jenkins -o jsonpath='{.items[0].metadata.name}') -n jenkins -- curl -O http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar",
+#       "kubectl exec po/$(kubectl get pod -n jenkins -o jsonpath='{.items[0].metadata.name}') -n jenkins -- apt install docker.io -y"    
 
      ]
    }
