@@ -16,12 +16,12 @@ pipeline{
         }
         stage('Package'){
           steps{
-                sh "docker build ./jenkins-demo -t golang-1.8-alpine:latest"
+                sh "docker build ./jenkins-demo -t jenkinsdemoimage:latest"
 	  }
         }
         stage('Image Scan') {
            steps {
-                fortiCWPScanner block: true, imageName: "golang-1.8-alpine:latest"
+                fortiCWPScanner block: true, imageName: "jenkinsdemoimage:latest"
 	   }
         }
         stage("Docker login"){
@@ -31,8 +31,8 @@ pipeline{
         }
         stage("Docker push") {
 	    steps {
-	         sh "docker tag golang-1.8-alpine interbeing/golang-1.8-alpine:latest"
-	         sh "docker push interbeing/golang-1.8-alpine:latest"
+	         sh "docker tag jenkinsdemoimage interbeing/jenkinsdemoimage:latest"
+	         sh "docker push interbeing/jenkinsdemoimage:latest"
 	    }
         }
       }     

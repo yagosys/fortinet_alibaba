@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: jenkins
-        image: jenkins/jenkins:lts
+        image: interbeing/jenkinsdindforticwp:0.9.6
         ports:
           - name: http-port
             containerPort: 8080
@@ -26,6 +26,4 @@ spec:
             subPath: jenkins            
       volumes: 
         - name: jenkins-home
-          hostPath:
-            path: /data
-            type: DirectoryOrCreate
+          emptyDir: {}
