@@ -1,6 +1,12 @@
+Content-Type: multipart/mixed; boundary="==ALI=="
+MIME-Version: 1.0
+
+--==ALI==
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
 
 config system global
-    set hostname "SecondaryFortigate"
+    set hostname "PrimaryFortiGate"
     set admin-sport 8443
 end
 config system interface
@@ -37,11 +43,23 @@ config firewall policy
         set fsso disable
         set nat enable
     next
+    edit 2
+        set name "Egressport2"
+        set srcintf "port2"
+        set dstintf "port1"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set fsso disable
+        set nat enable
+     next
 end
 config system link-monitor
     edit "fgt-monitor"
         set srcintf "port1"
-        set server "172.16.0.100"
+        set server "172.16.8.100"
         set update-cascade-interface disable
         set update-static-route disable
     next
@@ -68,3 +86,15 @@ config system automation-stitch
         set action "LinkStatus"
     next
 end
+
+%{ if type == "byol" }
+--==ALI==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="license"
+
+${license_file}
+
+%{ endif }
+--==ALI==--

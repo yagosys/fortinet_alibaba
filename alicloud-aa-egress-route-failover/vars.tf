@@ -1,5 +1,21 @@
 # Access keys can be referenced from the command line via terraform plan -var "access_key=key"
 // Configure the Alicloud Provider
+variable "create_web_vm" {
+   type = string
+   default = "true"
+}
+variable "license1" {
+  type = string
+  default = ""
+}
+variable "license2" {
+  type = string
+  default = ""
+}
+variable "licensetype" {
+   type = string
+   default = "byol"
+}
 variable "access_key" {
   type    = string
   default = ""

@@ -1,3 +1,28 @@
+data "template_file" "setupPrimary" {
+  template = "${file("${path.module}/ConfigScripts/primaryfortigateconfigscript")}"
+  vars = {
+    region     = "${var.region}",
+    type = "${var.licensetype}",
+    license_file=file("${var.license1}"),
+    account_id = "${data.alicloud_account.current.id}"
+    // Using the function.name attribute will result in a circular dependency
+    function_service = "${var.cluster_name}-${random_string.random_name_post.result}"
+    function_id      = "Fortigate-AA-Failover-${random_string.random_name_post.result}"
+  }
+}
+data "template_file" "setupSecondary" {
+  template = "${file("${path.module}/ConfigScripts/secondaryfortigateconfigscript")}"
+  vars = {
+    region     = "${var.region}",
+    type = "${var.licensetype}",
+    license_file=file("${var.license2}"),
+    account_id = "${data.alicloud_account.current.id}"
+    // Using the function.name attribute will result in a circular dependency
+    function_service = "${var.cluster_name}-${random_string.random_name_post.result}"
+    function_id      = "Fortigate-AA-Failover-${random_string.random_name_post.result}"
+  }
+}
+
 data "alicloud_regions" "current_region_ds" {
   current = true
 }
@@ -290,7 +315,7 @@ resource "alicloud_fc_function" "fortigate-AA-Failover" {
   memory_size = "512"
   runtime = "nodejs8"
   handler = "index.main"
-  timeout = "500"
+  timeout = "800"
   environment_variables = {
     managedby = "Created with Terraform"
     REGION = var.region
@@ -346,7 +371,7 @@ resource "alicloud_fc_function" "fortigate-callHealthCheck" {
   memory_size = "512"
   runtime     = "nodejs8"
   handler     = "callHealthCheck.callHealthCheck"
-  timeout     = "500"
+  timeout     = "800"
   environment_variables = {
     managedby = "Created with Terraform"
     FULL_URL  = "https://${data.alicloud_account.current.id}.${var.region}-internal.fc.aliyuncs.com/2016-08-15/proxy/${alicloud_fc_service.fortigate-failover-service.name}/${alicloud_fc_function.fortigate-AA-Failover.name}/"
@@ -430,16 +455,7 @@ resource "alicloud_instance" "PrimaryFortigate" {
   system_disk_category = "cloud_efficiency"
   instance_name = "${var.cluster_name}-Primary-FortiGate-${random_string.random_name_post.result}"
   vswitch_id = "${alicloud_vswitch.vsw.id}"
- # user_data = "${data.template_file.setupPrimary.rendered}"
-  user_data = templatefile(
-  "primaryfortigateconfigscript",
-   {
-    region     = "${var.region}",
-    account_id = "${data.alicloud_account.current.id}",
-    function_service = "${var.cluster_name}-${random_string.random_name_post.result}",
-    function_id      = "Fortigate-AA-Failover-${random_string.random_name_post.result}"
-   }
- )
+  user_data = "${data.template_file.setupPrimary.rendered}"
 
  // internet_max_bandwidth_in = 200
   internet_max_bandwidth_out = 100
@@ -453,6 +469,7 @@ resource "alicloud_instance" "PrimaryFortigate" {
 }
 //Secondary ENI Primary FortiGate
 resource "alicloud_network_interface" "PrimaryFortiGateInterface" {
+  depends_on =[time_sleep.wait_45_seconds_after_create_vswitch_A]
   name = "${var.cluster_name}-PrimaryPrivateENI-${random_string.random_name_post.result}"
   vswitch_id = "${alicloud_vswitch.vsw_internal_A.id}"
   security_groups = ["${alicloud_security_group.SecGroup.id}"]
@@ -473,16 +490,7 @@ resource "alicloud_instance" "SecondaryFortigate" {
   system_disk_category = "cloud_efficiency"
   instance_name = "${var.cluster_name}-Secondary-FortiGate-${random_string.random_name_post.result}"
   vswitch_id = "${alicloud_vswitch.vsw2.id}"
- // user_data = "${data.template_file.setupSecondary.rendered}"
-  user_data = templatefile(
-  "secondaryfortigateconfigscript",
-   {
-    region     = "${var.region}",
-    account_id = "${data.alicloud_account.current.id}",
-    function_service = "${var.cluster_name}-${random_string.random_name_post.result}",
-    function_id      = "Fortigate-AA-Failover-${random_string.random_name_post.result}"
-   })
-
+  user_data = "${data.template_file.setupSecondary.rendered}"
 //  internet_max_bandwidth_in = 200
   internet_max_bandwidth_out = 100
   private_ip = "${var.secondary_fortigate_private_ip}"
@@ -496,6 +504,7 @@ resource "alicloud_instance" "SecondaryFortigate" {
 }
 //Secondary ENI Secondary FortiGate
 resource "alicloud_network_interface" "SecondaryFortigateInterface" {
+  depends_on=[time_sleep.wait_45_seconds_after_create_vswitch]
   name = "${var.cluster_name}-SecondaryPrivateENI${random_string.random_name_post.result}"
   vswitch_id = "${alicloud_vswitch.vsw_internal_B.id}"
   security_groups = ["${alicloud_security_group.SecGroup.id}"]

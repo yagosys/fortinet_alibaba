@@ -1,2 +1,7 @@
-instance_ami="m-t4nae88itzcloga8thwz"
+#instance_ami="m-t4nae88itzcloga8thwz"
+instance_ami="m-t4nh53dqa1l5gstwcq5x" 
 region="ap-southeast-1"
+licensetype="byol"
+license1="./fgt1.lic"
+license2="./fgt2.lic"
+create_web_vm="true"
