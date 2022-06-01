@@ -14,5 +14,43 @@ client (curl) ----ExternalSLB -- |       |---Internal SLB -----         --NATGW
                                  Fortigate                     Web Server
 
 
+How to usage
+copy your fortigate license to the directory. the license name shall be same with the one you indicated in intl.auto.tfvars.
+modify  file intl.auto.tfvars with your own variable. 
+
+then on linux shell. do 
+-----
+export access_key="xxxxx"
+export secret_key="xxxxx"
+
+if export is not possible, you can also put access_key and secret_key in intl.auto.tfvars file.
+
+./deploy.sh
+
+below is an example of the fold that ready to deploy.
+
+i@ecs-148531:~/fortinet_alibaba/alicloud-aa-ingress-slb$ tree
+.
+├── ConfigScripts
+│   ├── primaryfortigateconfigscript
+│   └── secondaryfortigateconfigscript
+├── deploy.sh
+├── destroy.sh
+├── external_slb.tf
+├── fgt1.lic
+├── fgt2.lic
+├── ha.tf
+├── intl.auto.tfvars
+├── main.tf
+├── natgw.tf
+├── provider.tf
+├── README
+├── slb.tf
+├── sleep.tf
+├── user_data.sh
+├── vars.tf
+└── web.tf
+
+
 
 
