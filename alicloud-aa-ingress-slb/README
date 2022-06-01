@@ -1,0 +1,18 @@
+Resource deployed by default
+1. 1 VPC
+2. 4 Vswitch (vsw,vsw2,vsw_internal_A, vsw_internal_B)
+3. External SLB
+4. Internal SLB
+5. Two Fortigate
+6. Two WebServer Unbuntu host
+7. 1 NATGW
+8. 1 EIP for NATGW
+
+
+                                 Fortigate                     Web Server
+client (curl) ----ExternalSLB -- |       |---Internal SLB -----         --NATGW
+                                 Fortigate                     Web Server
+
+
+
+
