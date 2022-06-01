@@ -1,0 +1,11 @@
+#instance_ami="m-t4nae88itzcloga8thwz"
+#instance_ami="m-t4nh53dqa1l5gstwcq5x" #6.4.8 BYOL 
+instance_ami="m-t4n1pi4bc120x9cepcz4" #7.2.0 BYOL
+region="ap-southeast-1"
+licensetype="byol"
+license1="./fgt1.lic"
+license2="./fgt2.lic"
+number_web_vm=2
+slb_private_ip="172.16.1.50"
+fgt_internet_max_bandwidth_out=0
+eip_for_natgw=1
