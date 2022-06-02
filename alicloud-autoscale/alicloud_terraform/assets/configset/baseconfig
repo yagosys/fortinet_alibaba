@@ -1,0 +1,65 @@
+config system dns
+   unset primary
+   unset secondary
+end
+
+config firewall vip
+    edit "web"
+        set mappedip "172.16.2.200"
+        set extintf "port1"
+        set portforward enable
+        set extport 8080
+        set mappedport 8080
+    next
+end
+
+config firewall vip
+   edit "web-ssh"
+        set mappedip "172.16.2.200"
+        set extintf "port1"
+        set portforward enable
+        set extport 8022
+        set mappedport 22
+   next
+end
+
+config firewall policy
+    edit 2
+        set name "toweb"
+        set srcintf "port1"
+        set dstintf "port1"
+        set srcaddr "all"
+        set dstaddr "web"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set nat enable
+    next
+end
+
+config firewall policy
+   edit 3 
+       set name "toweb-ssh"
+       set srcintf "port1"
+       set dstintf "port1"
+       set srcaddr "all"
+       set dstaddr "web-ssh"
+       set action accept
+       set schedule "always"
+       set service "ALL"
+       set nat enable
+   next
+end
+
+config system auto-scale
+   set status enable
+   set sync-interface {SYNC_INTERFACE}
+   set role master
+   set callback-url {CALLBACK_URL}
+   set psksecret {PSK_SECRET}
+
+end
+config system global
+    set admin-sport {ADMIN_PORT}
+end
+

@@ -1,0 +1,34 @@
+Content-Type: multipart/mixed; boundary="==ALI=="
+MIME-Version: 1.0
+
+--==ALI==
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+
+config system dns
+   unset primary
+   unset secondary
+end
+config system auto-scale
+   set status enable
+   set sync-interface {SYNC_INTERFACE}
+   set role master
+   set callback-url {CALLBACK_URL}
+   set psksecret {PSK_SECRET}
+
+end
+config system global
+    set admin-sport {ADMIN_PORT}
+end
+
+%{ if type == "byol" }
+--==ALI==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="license"
+
+${license_file}
+
+%{ endif }
+--==ALI==--
